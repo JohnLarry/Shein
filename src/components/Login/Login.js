@@ -1,9 +1,12 @@
 import React from "react";
 import { useForm } from "react-hook-form";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import logo from "../../images/8666358.svg";
 
 const Login = () => {
+  const navigate = useNavigate();
   const {
     register,
     handleSubmit,
@@ -11,27 +14,47 @@ const Login = () => {
     reset,
   } = useForm();
   const onSubmit = async (data) => {
-    const login = {
-      username: data.username,
-      password: data.password,
-    };
-    console.log(login);
+    var login = new FormData();
+    login.append("username", data.username);
+    login.append("password", data.password);
+    login.append("auth", "XXX");
+    login.append("login", "1");
 
-    await fetch("https://mining-nfts.com/api/", {
-      mode: "no-cors",
+    fetch("https://mining-nfts.com/api/", {
       method: "POST",
-      headers: {
-        "content-type": "application/json",
-        "access-control-allow-headers": "application/json",
-        "Access-Control-Allow-Origin": "*",
-      },
-      body: JSON.stringify(login),
+      body: login,
     })
       .then((res) => res.json())
       .then((data) => {
         console.log(data);
+        if (data.status == 200) {
+          navigate("/");
+        } else if (data.status == 100) {
+          toast.error(data.message);
+          console.log(data.message);
+        } else if (data.status == 300) {
+          toast.dark(data.message);
+        }
       });
-    reset();
+    // console.log(data);
+    // const login = {
+    //   username: data.username,
+    //   password: data.password,
+    // };
+
+    // await fetch("https://mining-nfts.com/api/", {
+    //   method: "POST",
+    //   headers: {
+    //     "content-type": "application/json",
+    //     auth: "XXX",
+    //   },
+    //   body: JSON.stringify(login),
+    // })
+    //   .then((res) => res.json())
+    //   .then((data) => {
+    //     console.log(data);
+    //   });
+    // reset();
   };
 
   return (
@@ -53,7 +76,7 @@ const Login = () => {
               {...register("username", {
                 required: true,
                 maxLength: 12,
-                minLength: 6,
+                minLength: 5,
               })}
             />
             {errors.userName && <p>User name is required</p>}
@@ -66,7 +89,7 @@ const Login = () => {
               type="password"
               placeholder="Please enter the password"
               class="input input-bordered"
-              {...register("password", { required: true, maxLength: 8 })}
+              {...register("password", { required: true, maxLength: 5 })}
             />
             {errors.password && <p>Password is required</p>}
           </div>
@@ -85,6 +108,7 @@ const Login = () => {
             <input class="btn btn-primary" type="submit" value="Login Now" />
           </div>
         </form>
+        <ToastContainer />
         <p>
           Don't have an account?{" "}
           <Link to="/register" className="text-primary">
