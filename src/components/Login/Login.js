@@ -4,9 +4,11 @@ import { Link, useNavigate } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import logo from "../../images/8666358.svg";
+import { authkey, logged } from "./authkey";
 
 const Login = () => {
   const navigate = useNavigate();
+
   const {
     register,
     handleSubmit,
@@ -17,7 +19,7 @@ const Login = () => {
     var login = new FormData();
     login.append("username", data.username);
     login.append("password", data.password);
-    login.append("auth", "XXX");
+    login.append("auth", authkey);
     login.append("login", "1");
 
     fetch("https://mining-nfts.com/api/", {
@@ -28,6 +30,7 @@ const Login = () => {
       .then((data) => {
         console.log(data);
         if (data.status == 200) {
+          localStorage.setItem("auth", data.message);
           navigate("/");
         } else if (data.status == 100) {
           toast.error(data.message);
