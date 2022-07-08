@@ -1,33 +1,35 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { authkey } from "../../Login/authkey";
-import DashboardBanner from "../DashboardBanner/DashboardBanner";
 import Sites from "../Sites/Sites/Sites";
 import profilePic from "../../../images/profile.jpg";
 import { MdOutlineRotateLeft } from "react-icons/md";
 
 const Dashboard = () => {
-  const [data, setData] = useState();
+  const [users, setUsers] = useState();
   const navigate = useNavigate();
 
-  var login = new FormData();
-  login.append("dashboard", "");
-  login.append("auth", authkey);
-  login.append("logged", localStorage.getItem("auth"));
+  var dashboard = new FormData();
+  dashboard.append("dashboard", "");
+  dashboard.append("auth", authkey);
+  dashboard.append("logged", localStorage.getItem("auth"));
 
-  fetch("https://mining-nfts.com/api/", {
-    method: "POST",
-    body: login,
-  })
-    .then((res) => res.json())
-    .then((data) => {
-      console.log(data);
-      if (data.status == 200) {
-        console.log(data.message.asset);
-      } else {
-        navigate("/login");
-      }
-    });
+  useEffect(() => {
+    fetch("https://mining-nfts.com/api/", {
+      method: "POST",
+      body: dashboard,
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.status == 200) {
+          setUsers(data);
+          console.log(data);
+        } else {
+          navigate("/login");
+        }
+      });
+  }, []);
+
   return (
     <div>
       <div className="container mx-auto max-w-[1080px] p-5">
@@ -50,7 +52,7 @@ const Dashboard = () => {
                   </h2>
                   <div className="flex items-center gap-2 py-5">
                     <h5 className="md:text-base lg:text-base ">
-                      Total assests: 0
+                      Total assests: {users?.message?.asset}
                     </h5>
                     <span>
                       <MdOutlineRotateLeft></MdOutlineRotateLeft>
@@ -72,15 +74,18 @@ const Dashboard = () => {
                     className="inline-block w-8 h-8 stroke-current"
                   >
                     <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
                       d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
                     ></path>
                   </svg>
                 </div>
                 <div className="stat-title">Grabbed/ Total:</div>
-                <div className="stat-value text-primary"> 0/50</div>
+                <div className="stat-value text-primary">
+                  {" "}
+                  {users?.message?.total}/50
+                </div>
                 <div className="stat-desc">Jan 1st - Feb 1st</div>
               </div>
 
@@ -93,15 +98,17 @@ const Dashboard = () => {
                     className="inline-block w-8 h-8 stroke-current"
                   >
                     <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
                       d="M13 10V3L4 14h7v7l9-11h-7z"
                     ></path>
                   </svg>
                 </div>
                 <div className="stat-title">Promotion bonus: </div>
-                <div className="stat-value text-secondary">0</div>
+                <div className="stat-value text-secondary">
+                  {users?.message?.promotion_bonus}
+                </div>
                 <div className="stat-desc">↗︎ 400 (22%)</div>
               </div>
 
@@ -114,22 +121,22 @@ const Dashboard = () => {
                     className="inline-block w-8 h-8 stroke-current"
                   >
                     <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
                       d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"
                     ></path>
                   </svg>
                 </div>
                 <div className="stat-title">Today's profit: </div>
-                <div className="stat-value">0</div>
+                <div className="stat-value">{users?.message?.today_profit}</div>
                 <div className="stat-desc">↘︎ 90 (14%)</div>
               </div>
             </div>
           </section>
         </div>
       </div>
-      <Sites></Sites>
+      <Sites users={users}></Sites>
     </div>
   );
 };
