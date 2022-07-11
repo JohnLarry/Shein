@@ -2,8 +2,15 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { AiOutlineArrowRight } from "react-icons/ai";
 import { IoIosArrowBack } from "react-icons/io";
+import { GrStatusGood } from "react-icons/gr";
+import { useSelector, useDispatch } from "react-redux";
+import { updateSummary } from "../../store/slice";
 
 const Summary = () => {
+  const dispatch = useDispatch();
+  const summary = useSelector((state) => state.summary.data);
+  const user = useSelector((state) => state.user.data);
+  let iconStyles = { color: "white", fontSize: "1.5em" };
   const [vipCard, setVipCard] = useState([
     {
       _id: 1,
@@ -66,20 +73,27 @@ const Summary = () => {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mt-5">
-        {vipCard.map((card) => (
+        {summary.map((card) => (
           <div className="card bg-base-200 shadow-xl">
             <div className="card-body">
               <div className="flex justify-between">
-                <h1>{card.title}</h1>
+                <h1>{card.packName}</h1>
+                {card.packName.toLowerCase() + "_orders" in user[0] !== null ? (
+                  <span>
+                    completeed <GrStatusGood style={iconStyles} />
+                  </span>
+                ) : (
+                  <span>show components</span>
+                )}
                 <AiOutlineArrowRight></AiOutlineArrowRight>
               </div>
               <div className="flex justify-between">
-                <h1>{card.rateTitle}</h1>
-                <h1>{card.rate}</h1>
+                <h1>Commission rate</h1>
+                <h1>{card.commission_percent}</h1>
               </div>
               <div className="flex justify-between">
-                <h1>{card.marketTitle}</h1>
-                <h1>{card.market}</h1>
+                <h1>Open markets</h1>
+                <h1>{card.marketName}</h1>
               </div>
             </div>
           </div>

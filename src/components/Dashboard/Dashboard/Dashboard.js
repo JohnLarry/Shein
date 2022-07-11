@@ -4,10 +4,14 @@ import { authkey } from "../../Login/authkey";
 import Sites from "../Sites/Sites/Sites";
 import profilePic from "../../../images/profile.jpg";
 import { MdOutlineRotateLeft } from "react-icons/md";
+import { useSelector, useDispatch } from "react-redux";
+import { updateSummary } from "../../../store/slice";
+import { updateUser } from "../../../store/slice";
 
 const Dashboard = () => {
   const [users, setUsers] = useState();
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   var dashboard = new FormData();
   dashboard.append("dashboard", "");
@@ -23,6 +27,8 @@ const Dashboard = () => {
       .then((data) => {
         if (data.status == 200) {
           setUsers(data);
+          dispatch(updateSummary(data.user));
+          dispatch(updateUser(data.pack));
           console.log(data);
         } else {
           navigate("/login");
