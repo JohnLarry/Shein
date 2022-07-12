@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./OrderGrab.css";
 import { useSelector, useDispatch } from "react-redux/es/exports";
 import { authkey } from "../Login/authkey";
@@ -6,12 +6,13 @@ const OrderGrab = () => {
   const dispatch = useDispatch();
   const [status, setStatus] = useState("");
   const [showOrderCompletedTodayModal, setShowOrderCompletedTodayModal] =
-    useState(true);
+    useState(false);
   const [showOrderErrorModal, setShowOrderErrorModal] = useState(false);
   const [showOrderPageModal, setShowOrderPageModal] = useState(false);
   const user = useSelector((state) => state.user.data);
   var pack_level = 1;
   var grab = new FormData();
+  console.log(user[0]["ableToWork"]);
   grab.append("pack_level", pack_level);
   grab.append("grab", "");
   grab.append("auth", authkey);
@@ -25,21 +26,46 @@ const OrderGrab = () => {
       .then((data) => {
         if (data.status == 200) {
           console.log("Show order page");
+          setShowOrderPageModal(true);
+          closeModal();
           setStatus("200");
           console.log(data);
         }
         if (data.status == 201) {
+          setShowOrderCompletedTodayModal(true);
+          closeModal();
           setStatus("201");
           console.log("Order is completed for today");
           console.log(data);
         }
         if (data.status == 100) {
+          setShowOrderErrorModal(true);
+          closeModal();
           setStatus("100");
           console.log("Error occured invalid pack id");
         }
       });
   };
-
+  const closeModal = () => {
+    setTimeout(() => {
+      setShowOrderCompletedTodayModal(false);
+      setShowOrderErrorModal(false);
+      setShowOrderPageModal(false);
+      setStatus("");
+    }, 5000);
+  };
+  const closeOrderPageModal = () => {
+    setShowOrderPageModal(false);
+    setStatus("");
+  };
+  const closeErrorModal = () => {
+    setShowOrderErrorModal(false);
+    setStatus("");
+  };
+  const closeCompletedTodayModal = () => {
+    setShowOrderCompletedTodayModal(false);
+    setStatus("");
+  };
   return (
     <div>
       <div className="  ">
@@ -93,6 +119,7 @@ const OrderGrab = () => {
                     <button
                       className="btn text-white w-full font-bold bg-gray-900"
                       onClick={grabOrder}
+                      disabled={user[0]["ableToWork"] == "1" ? false : true}
                     >
                       Grab Now
                     </button>
@@ -211,8 +238,28 @@ const OrderGrab = () => {
               <div className="justify-center items-center flex overflow-x-hidden overflow-y-auto fixed inset-0 z-50 outline-none focus:outline-none">
                 <div className="relative  my-6 mx-auto ">
                   {/*content*/}
+
                   <div className=" w-90 mr-5 ml-5 sm:w-100 md:w-90 lg:w-90 xl:w-90 sm:h-60 md:h-50 lg:h-45 xl:h-41 border-0 rounded-lg shadow-lg relative flex flex-col w-full bg-white outline-none focus:outline-none border-green-500">
-                    {status ? (
+                    <div
+                      className="flex justify-end bg-[#CBD5E1]"
+                      onClick={() => {
+                        closeCompletedTodayModal();
+                      }}
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        stroke="#0A459F"
+                        fill="#FFFFFF"
+                        stroke-width="0"
+                        viewBox="0 0 24 24"
+                        height="1em"
+                        width="1em"
+                      >
+                        <path fill="none" d="M0 0h24v24H0z" />
+                        <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" />
+                      </svg>
+                    </div>
+                    {status === "200" ? (
                       <div className="p-4">
                         <div className="flex justify-center mt-2">
                           <img src={"/checked.svg"} alt="Checked.svg" />
@@ -252,12 +299,27 @@ const OrderGrab = () => {
               <div className="justify-center items-center flex overflow-x-hidden overflow-y-auto fixed inset-0 z-50 outline-none focus:outline-none ">
                 <div className="relative  my-6 mx-auto ">
                   {/*content*/}
+
                   <div className=" reseller-popup w-90 mr-5 ml-5 sm:w-100 md:w-90 lg:w-90 xl:w-90 sm:h-60 md:h-50 lg:h-45 xl:h-41 border-0 rounded-lg shadow-lg relative flex flex-col w-full bg-white outline-none focus:outline-none border-green-500">
-                    {status && (
-                      <div className="flex justify-center text-orange-500">
-                        <p className=" ">An error occured, try again.</p>
-                      </div>
-                    )}
+                    <div
+                      className="flex justify-end bg-[#CBD5E1]"
+                      onClick={() => {
+                        closeOrderPageModal();
+                      }}
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        stroke="#0A459F"
+                        fill="#FFFFFF"
+                        stroke-width="0"
+                        viewBox="0 0 24 24"
+                        height="1em"
+                        width="1em"
+                      >
+                        <path fill="none" d="M0 0h24v24H0z" />
+                        <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" />
+                      </svg>
+                    </div>
 
                     {status === "success" ? (
                       <div className="p-4">
@@ -281,7 +343,7 @@ const OrderGrab = () => {
                       <>
                         <div className="flex flex-col justify-between p-5   rounded-t bg-slate-300 bg-white-300 text-black">
                           <p className="font-bold text-center text-2xl text-wrap">
-                            Check if your SIM has been activated
+                            Show order page
                           </p>
                         </div>
                       </>
@@ -300,6 +362,26 @@ const OrderGrab = () => {
                 <div className="relative  my-6 mx-auto ">
                   {/*content*/}
                   <div className=" reseller-popup w-90 mr-5 ml-5 sm:w-100 md:w-90 lg:w-90 xl:w-90 sm:h-60 md:h-50 lg:h-45 xl:h-41 border-0 rounded-lg shadow-lg relative flex flex-col w-full bg-white outline-none focus:outline-none border-green-500">
+                    <div
+                      className="flex justify-end bg-[#CBD5E1]"
+                      onClick={() => {
+                        closeErrorModal();
+                      }}
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        stroke="#0A459F"
+                        fill="#FFFFFF"
+                        stroke-width="0"
+                        viewBox="0 0 24 24"
+                        height="1em"
+                        width="1em"
+                      >
+                        <path fill="none" d="M0 0h24v24H0z" />
+                        <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" />
+                      </svg>
+                    </div>
+
                     {status ? (
                       <div className="p-4">
                         <div className="flex justify-center mt-2">
