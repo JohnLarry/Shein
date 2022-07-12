@@ -1,7 +1,45 @@
-import React from "react";
+import React, { useState } from "react";
 import "./OrderGrab.css";
-
+import { useSelector, useDispatch } from "react-redux/es/exports";
+import { authkey } from "../Login/authkey";
 const OrderGrab = () => {
+  const dispatch = useDispatch();
+  const [status, setStatus] = useState("");
+  const [showOrderCompletedTodayModal, setShowOrderCompletedTodayModal] =
+    useState(true);
+  const [showOrderErrorModal, setShowOrderErrorModal] = useState(false);
+  const [showOrderPageModal, setShowOrderPageModal] = useState(false);
+  const user = useSelector((state) => state.user.data);
+  var pack_level = 1;
+  var grab = new FormData();
+  grab.append("pack_level", pack_level);
+  grab.append("grab", "");
+  grab.append("auth", authkey);
+  grab.append("logged", localStorage.getItem("auth"));
+  const grabOrder = () => {
+    fetch("https://mining-nfts.com/api/", {
+      method: "POST",
+      body: grab,
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.status == 200) {
+          console.log("Show order page");
+          setStatus("200");
+          console.log(data);
+        }
+        if (data.status == 201) {
+          setStatus("201");
+          console.log("Order is completed for today");
+          console.log(data);
+        }
+        if (data.status == 100) {
+          setStatus("100");
+          console.log("Error occured invalid pack id");
+        }
+      });
+  };
+
   return (
     <div>
       <div className="  ">
@@ -52,7 +90,10 @@ const OrderGrab = () => {
                     </div>
                   </div>
                   <div className="card-actions justify-end w-full">
-                    <button className="btn text-white w-full font-bold bg-gray-900">
+                    <button
+                      className="btn text-white w-full font-bold bg-gray-900"
+                      onClick={grabOrder}
+                    >
                       Grab Now
                     </button>
                   </div>
@@ -163,6 +204,137 @@ const OrderGrab = () => {
           </div>
         </div>
       </div>
+      <>
+        <div className="bg-[#3F4D67]">
+          {showOrderCompletedTodayModal ? (
+            <>
+              <div className="justify-center items-center flex overflow-x-hidden overflow-y-auto fixed inset-0 z-50 outline-none focus:outline-none">
+                <div className="relative  my-6 mx-auto ">
+                  {/*content*/}
+                  <div className=" w-90 mr-5 ml-5 sm:w-100 md:w-90 lg:w-90 xl:w-90 sm:h-60 md:h-50 lg:h-45 xl:h-41 border-0 rounded-lg shadow-lg relative flex flex-col w-full bg-white outline-none focus:outline-none border-green-500">
+                    {status ? (
+                      <div className="p-4">
+                        <div className="flex justify-center mt-2">
+                          <img src={"/checked.svg"} alt="Checked.svg" />
+                        </div>
+                        <div>
+                          <p className="text-black font-bold text-center"></p>
+                        </div>
+                        <div className="flex justify-center mt-6">
+                          {" "}
+                          <button
+                            className="bg-green-500 rounded text-white capitalized  font-bold  px-6 py-2 text-sm outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
+                            type="button"
+                          >
+                            Ok
+                          </button>
+                        </div>
+                      </div>
+                    ) : (
+                      <>
+                        <div className="flex flex-col justify-between p-5   rounded-t bg-slate-300 bg-white-300 text-black">
+                          <p className="font-bold text-center text-2xl text-wrap">
+                            Show order completed for today
+                          </p>
+                        </div>
+                      </>
+                    )}
+                  </div>
+                </div>
+              </div>
+              <div className="opacity-25 fixed inset-0 z-40 bg-black"></div>
+            </>
+          ) : null}
+        </div>
+        <div>
+          {showOrderPageModal ? (
+            <>
+              <div className="justify-center items-center flex overflow-x-hidden overflow-y-auto fixed inset-0 z-50 outline-none focus:outline-none ">
+                <div className="relative  my-6 mx-auto ">
+                  {/*content*/}
+                  <div className=" reseller-popup w-90 mr-5 ml-5 sm:w-100 md:w-90 lg:w-90 xl:w-90 sm:h-60 md:h-50 lg:h-45 xl:h-41 border-0 rounded-lg shadow-lg relative flex flex-col w-full bg-white outline-none focus:outline-none border-green-500">
+                    {status && (
+                      <div className="flex justify-center text-orange-500">
+                        <p className=" ">An error occured, try again.</p>
+                      </div>
+                    )}
+
+                    {status === "success" ? (
+                      <div className="p-4">
+                        <div className="flex justify-center mt-2">
+                          <img src={"/checked.svg"} alt="Checked.svg" />
+                        </div>
+                        <div>
+                          <p className="text-black font-bold text-center"></p>
+                        </div>
+                        <div className="flex justify-center mt-6">
+                          {" "}
+                          <button
+                            className="bg-green-500 rounded text-white capitalized  font-bold  px-6 py-2 text-sm outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
+                            type="button"
+                          >
+                            Ok
+                          </button>
+                        </div>
+                      </div>
+                    ) : (
+                      <>
+                        <div className="flex flex-col justify-between p-5   rounded-t bg-slate-300 bg-white-300 text-black">
+                          <p className="font-bold text-center text-2xl text-wrap">
+                            Check if your SIM has been activated
+                          </p>
+                        </div>
+                      </>
+                    )}
+                  </div>
+                </div>
+              </div>
+              <div className="opacity-25 fixed inset-0 z-40 bg-black"></div>
+            </>
+          ) : null}
+        </div>
+        <div>
+          {showOrderErrorModal ? (
+            <>
+              <div className="justify-center items-center flex overflow-x-hidden overflow-y-auto fixed inset-0 z-50 outline-none focus:outline-none ">
+                <div className="relative  my-6 mx-auto ">
+                  {/*content*/}
+                  <div className=" reseller-popup w-90 mr-5 ml-5 sm:w-100 md:w-90 lg:w-90 xl:w-90 sm:h-60 md:h-50 lg:h-45 xl:h-41 border-0 rounded-lg shadow-lg relative flex flex-col w-full bg-white outline-none focus:outline-none border-green-500">
+                    {status ? (
+                      <div className="p-4">
+                        <div className="flex justify-center mt-2">
+                          <img src={"/checked.svg"} alt="Checked.svg" />
+                        </div>
+                        <div>
+                          <p className="text-black font-bold text-center"></p>
+                        </div>
+                        <div className="flex justify-center mt-6">
+                          {" "}
+                          <button
+                            className="bg-green-500 rounded text-white capitalized  font-bold  px-6 py-2 text-sm outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
+                            type="button"
+                          >
+                            Ok
+                          </button>
+                        </div>
+                      </div>
+                    ) : (
+                      <>
+                        <div className="flex flex-col justify-between p-5   rounded-t bg-slate-300 bg-white-300 text-black">
+                          <p className="font-bold text-center text-2xl text-wrap">
+                            Show error occured
+                          </p>
+                        </div>
+                      </>
+                    )}
+                  </div>
+                </div>
+              </div>
+              <div className="opacity-25 fixed inset-0 z-40 bg-black"></div>
+            </>
+          ) : null}
+        </div>
+      </>
     </div>
   );
 };

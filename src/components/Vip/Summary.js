@@ -10,7 +10,14 @@ const Summary = () => {
   const dispatch = useDispatch();
   const summary = useSelector((state) => state.summary.data);
   const user = useSelector((state) => state.user.data);
-  let iconStyles = { color: "white", fontSize: "1.5em" };
+  let iconStyles = {
+    color: "white",
+    fontSize: "1.5em",
+    fill: "white",
+    stroke: "green",
+  };
+  console.log(summary);
+  console.log(user);
   const [vipCard, setVipCard] = useState([
     {
       _id: 1,
@@ -76,25 +83,37 @@ const Summary = () => {
         {summary.map((card) => (
           <div className="card bg-base-200 shadow-xl">
             <div className="card-body">
-              <div className="flex justify-between">
-                <h1>{card.packName}</h1>
-                {card.packName.toLowerCase() + "_orders" in user[0] !== null ? (
-                  <span>
-                    completeed <GrStatusGood style={iconStyles} />
-                  </span>
-                ) : (
-                  <span>show components</span>
-                )}
-                <AiOutlineArrowRight></AiOutlineArrowRight>
-              </div>
-              <div className="flex justify-between">
-                <h1>Commission rate</h1>
-                <h1>{card.commission_percent}</h1>
-              </div>
-              <div className="flex justify-between">
-                <h1>Open markets</h1>
-                <h1>{card.marketName}</h1>
-              </div>
+              {user[0][card.packName.toLowerCase() + "_orders"] !== null ? (
+                <div className="flex justify-between">
+                  <h1>{card.packName}</h1>
+
+                  <div className="flex">
+                    <span className="flex">
+                      Completed level{" "}
+                      <GrStatusGood style={iconStyles}></GrStatusGood>
+                    </span>
+
+                    <AiOutlineArrowRight></AiOutlineArrowRight>
+                  </div>
+                </div>
+              ) : (
+                <> 
+                  <div className="flex justify-between">
+                    <h1>{card.packName}</h1>
+
+                    <AiOutlineArrowRight></AiOutlineArrowRight>
+                  </div>
+
+                  <div className="flex justify-between">
+                    <h1>Commission rate</h1>
+                    <h1>{card.commission_percent}</h1>
+                  </div>
+                  <div className="flex justify-between">
+                    <h1>Open markets</h1>
+                    <h1>{card.marketName}</h1>
+                  </div>
+                </>
+              )}
             </div>
           </div>
         ))}
