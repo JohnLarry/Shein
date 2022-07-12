@@ -12,7 +12,7 @@ const CurrentLevel = () => {
         </Link>
         <h1 className="text-xl font-bold text-center">VIP</h1>
       </div>
-      <div className="flex justify-between max-w-[600px] mx-20 md:mx-auto">
+      <div className="flex justify-between max-w-[600px] md:mx-auto">
         <div className="flex flex-col items-center">
           <Link to="/current-level">Current Level</Link>
           <div className="h-[2px] w-6 bg-primary"></div>
