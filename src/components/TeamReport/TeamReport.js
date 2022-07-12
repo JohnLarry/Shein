@@ -11,13 +11,13 @@ const TeamReport = () => {
         </Link>
         <h1 className="text-xl font-bold text-center">Team Report</h1>
       </div>
-      <div className="flex justify-between max-w-[600px] mx-20 md:mx-auto">
+      <div className="flex justify-between max-w-[600px]  md:mx-auto">
         <div className="flex flex-col items-center">
           <Link to="/team-report/agent">Agent Report</Link>
           <div className="h-[2px] w-6 bg-primary"></div>
         </div>
         <div className="flex flex-col items-center">
-          <Link to="/summary">Summary</Link>
+          <Link to="/deposit-withdraw">Deposit and withdrawal details</Link>
           <div className="h-[2px] w-6 bg-primary"></div>
         </div>
       </div>
