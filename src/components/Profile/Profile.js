@@ -97,7 +97,7 @@ const Profile = () => {
             <img src={withdrawSettings} alt="" />
             <h1>Withdrawal settings</h1>
           </Link>
-          <Link to="/team-report" className="flex flex-col items-center">
+          <Link to="/team-report/agent" className="flex flex-col items-center">
             <img src={teamReport} alt="" />
             <h1>Team report</h1>
           </Link>
