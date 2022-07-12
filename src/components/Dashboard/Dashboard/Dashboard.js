@@ -27,8 +27,8 @@ const Dashboard = () => {
       .then((data) => {
         if (data.status == 200) {
           setUsers(data);
-          dispatch(updateSummary(data.user));
-          dispatch(updateUser(data.pack));
+          dispatch(updateSummary(data.message.pack));
+          dispatch(updateUser(data.message.user));
           console.log(data);
         } else {
           navigate("/login");
