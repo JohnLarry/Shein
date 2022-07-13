@@ -25,8 +25,8 @@ const CurrentLevel = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
         <div>
           <h1 className="text-xl font-medium my-5">Current level - (VIP-1)</h1>
-          <div class="card bg-base-200 shadow-xl">
-            <div class="card-body">
+          <div className="card bg-base-200 shadow-xl">
+            <div className="card-body">
               <div className="w-24">
                 <img src={vipLogo} alt="" />
               </div>
@@ -44,8 +44,8 @@ const CurrentLevel = () => {
         </div>
         <div>
           <h1 className="text-xl font-medium my-5">To reach next VIP level</h1>
-          <div class="card bg-base-200 shadow-xl">
-            <div class="card-body">
+          <div className="card bg-base-200 shadow-xl">
+            <div className="card-body">
               <div className="flex justify-between">
                 <h1>Valid junior members</h1>
                 <h1>

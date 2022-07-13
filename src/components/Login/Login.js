@@ -29,6 +29,7 @@ const Login = () => {
       .then((res) => res.json())
       .then((data) => {
         console.log(data);
+        reset();
         if (data.status == 200) {
           localStorage.setItem("auth", data.message);
           navigate("/");
@@ -39,25 +40,6 @@ const Login = () => {
           toast.dark(data.message);
         }
       });
-    // console.log(data);
-    // const login = {
-    //   username: data.username,
-    //   password: data.password,
-    // };
-
-    // await fetch("https://mining-nfts.com/api/", {
-    //   method: "POST",
-    //   headers: {
-    //     "content-type": "application/json",
-    //     auth: "XXX",
-    //   },
-    //   body: JSON.stringify(login),
-    // })
-    //   .then((res) => res.json())
-    //   .then((data) => {
-    //     console.log(data);
-    //   });
-    // reset();
   };
 
   return (
@@ -66,16 +48,16 @@ const Login = () => {
         <img src={logo} alt="" />
         <h1 className="text-2xl font-bold text-white">SHEIN ASSISTANT</h1>
       </div>
-      <div class="card-body max-w-[400px] mx-auto">
+      <div className="card-body max-w-[400px] mx-auto">
         <form onSubmit={handleSubmit(onSubmit)}>
-          <div class="form-control">
-            <label class="label">
-              <span class="label-text">Username</span>
+          <div className="form-control">
+            <label className="label">
+              <span className="label-text">Username</span>
             </label>
             <input
               type="text"
               placeholder="Please Enter 6~12 letters or numbers"
-              class="input input-bordered"
+              className="input input-bordered"
               {...register("username", {
                 required: true,
                 maxLength: 12,
@@ -84,31 +66,35 @@ const Login = () => {
             />
             {errors.userName && <p>User name is required</p>}
           </div>
-          <div class="form-control">
-            <label class="label">
-              <span class="label-text">Password</span>
+          <div className="form-control">
+            <label className="label">
+              <span className="label-text">Password</span>
             </label>
             <input
               type="password"
               placeholder="Please enter the password"
-              class="input input-bordered"
+              className="input input-bordered"
               {...register("password", { required: true, maxLength: 5 })}
             />
             {errors.password && <p>Password is required</p>}
           </div>
-          <div class="form-control">
-            <label class="label">
-              <span class="label-text">Verification Code</span>
+          <div className="form-control">
+            <label className="label">
+              <span className="label-text">Verification Code</span>
             </label>
             <input
               type="text"
               placeholder="Please enter verification code"
-              class="input input-bordered"
+              className="input input-bordered"
               {...register("verification")}
             />
           </div>
-          <div class="form-control mt-6">
-            <input class="btn btn-primary" type="submit" value="Login Now" />
+          <div className="form-control mt-6">
+            <input
+              className="btn btn-primary"
+              type="submit"
+              value="Login Now"
+            />
           </div>
         </form>
         <ToastContainer />

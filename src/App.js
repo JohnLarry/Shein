@@ -19,6 +19,8 @@ import Home from "./components/Home/Home";
 import NotFound from "./components/NotFound/NotFound";
 import TeamReport from "./components/TeamReport/TeamReport";
 import DepositAndWithdrawal from "./components/TeamReport/DepositAndWithdrawal";
+import Deposit from "./components/Deposit/Deposit";
+import ChangePassword from "./components/PersonalInfo/ChangePassword";
 
 function App() {
   return (
@@ -27,6 +29,7 @@ function App() {
         <Route path="/" element={<Home></Home>}></Route>
         <Route path="/login" element={<Login></Login>}></Route>
         <Route path="/register" element={<Register></Register>}></Route>
+        <Route path="/deposit" element={<Deposit></Deposit>}></Route>
         <Route
           path="/invite-friends"
           element={<InviteFriends></InviteFriends>}
@@ -66,6 +69,10 @@ function App() {
         <Route
           path="/deposit-withdraw"
           element={<DepositAndWithdrawal></DepositAndWithdrawal>}
+        ></Route>
+        <Route
+          path="/change-password"
+          element={<ChangePassword></ChangePassword>}
         ></Route>
         <Route path="/*" element={<NotFound></NotFound>}></Route>
       </Routes>

@@ -22,7 +22,7 @@ const DepositAndWithdrawal = () => {
         </div>
       </div>
       <div className="flex justify-between my-10">
-        <select class="select select-secondary select-bordered w-[150px] max-w-xs">
+        <select className="select select-secondary select-bordered w-[150px] max-w-xs">
           <option disabled selected>
             Today
           </option>
@@ -30,7 +30,7 @@ const DepositAndWithdrawal = () => {
           <option>Within a week</option>
           <option>Start from 2022/07/12</option>
         </select>
-        <select class="select select-secondary select-bordered w-[150px] max-w-xs">
+        <select className="select select-secondary select-bordered w-[150px] max-w-xs">
           <option disabled selected>
             All
           </option>
@@ -38,8 +38,8 @@ const DepositAndWithdrawal = () => {
           <option>Withdrawal history</option>
         </select>
       </div>
-      <div class="overflow-x-auto">
-        <table class="table table-zebra w-full">
+      <div className="overflow-x-auto">
+        <table className="table table-zebra w-full">
           <thead>
             <tr>
               <th>Account</th>

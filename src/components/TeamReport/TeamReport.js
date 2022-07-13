@@ -22,7 +22,7 @@ const TeamReport = () => {
         </div>
       </div>
       <div className="flex justify-between my-10">
-        <select class="select select-secondary select-bordered w-[150px] max-w-xs">
+        <select className="select select-secondary select-bordered w-[150px] max-w-xs">
           <option disabled selected>
             Today
           </option>
@@ -30,17 +30,17 @@ const TeamReport = () => {
           <option>Within a day</option>
           <option>Customized</option>
         </select>
-        <select class="select select-secondary select-bordered w-[150px] max-w-xs">
+        <select className="select select-secondary select-bordered w-[150px] max-w-xs">
           <option disabled selected>
             All
           </option>
         </select>
       </div>
-      <div class="card mx-auto bg-base-200 shadow-xl w-full">
-        <div class="card-body">
+      <div className="card mx-auto bg-base-200 shadow-xl w-full">
+        <div className="card-body">
           <div className="flex gap-5 mb-5">
             <div>
-              <h2 class="card-title">Financial Info</h2>
+              <h2 className="card-title">Financial Info</h2>
             </div>
           </div>
 
@@ -75,11 +75,11 @@ const TeamReport = () => {
           </div>
         </div>
       </div>
-      <div class="card mx-auto bg-base-200 shadow-xl w-full my-5">
-        <div class="card-body">
+      <div className="card mx-auto bg-base-200 shadow-xl w-full my-5">
+        <div className="card-body">
           <div className="flex gap-5 mb-5">
             <div>
-              <h2 class="card-title">Team member details</h2>
+              <h2 className="card-title">Team member details</h2>
             </div>
           </div>
 

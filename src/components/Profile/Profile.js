@@ -29,13 +29,13 @@ const Profile = () => {
         <div className="w-full h-[350px] bg-primary relative rounded-b-[50%]">
           <div className="w-[90%] mx-auto flex justify-between items-center pt-12 text-white">
             <div className="flex gap-5 mb-5">
-              <div class="avatar">
-                <div class="w-12 rounded-full ring ring-secondary ring-offset-white ring-offset-2">
+              <div className="avatar">
+                <div className="w-12 rounded-full ring ring-secondary ring-offset-white ring-offset-2">
                   <img src={avater} alt="" />
                 </div>
               </div>
               <div>
-                <h2 class="card-title">User name</h2>
+                <h2 className="card-title">User name</h2>
                 <p>Invitation Code: 56437884</p>
               </div>
             </div>
