@@ -15,6 +15,7 @@ const PersonalInfo = () => {
   const verifyRef = useRef("");
   const withdrawRef = useRef("");
   const addressRef = useRef("");
+  const withdrawalRef = useRef("");
 
   const handleVerify = () => {
     var verifyCode = new FormData();
@@ -113,30 +114,33 @@ const PersonalInfo = () => {
   const handleAddress = (e) => {
     e.preventDefault();
     const addressChange = addressRef.current.value;
+    const withdrawalPass = withdrawalRef.current.value;
 
-    var changeAddress = new FormData();
-    changeAddress.append("auth", authkey);
-    changeAddress.append("logged", localStorage.getItem("auth"));
-    changeAddress.append("profile", "");
-    changeAddress.append("set_usdt", "");
-    changeAddress.append("address", addressChange);
+    if (withdrawalPass == user[0]?.secret_key) {
+      var changeAddress = new FormData();
+      changeAddress.append("auth", authkey);
+      changeAddress.append("logged", localStorage.getItem("auth"));
+      changeAddress.append("profile", "");
+      changeAddress.append("set_usdt", "");
+      changeAddress.append("address", addressChange);
 
-    fetch("https://mining-nfts.com/api/", {
-      method: "POST",
-      body: changeAddress,
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        console.log(data);
-
-        if (data.status == 200) {
+      fetch("https://mining-nfts.com/api/", {
+        method: "POST",
+        body: changeAddress,
+      })
+        .then((res) => res.json())
+        .then((data) => {
           console.log(data);
-          toast.success(data.message);
-          navigate("/profile");
-        } else {
-          console.log(data);
-        }
-      });
+
+          if (data.status == 200) {
+            console.log(data);
+            toast.success(data.message);
+            navigate("/profile");
+          } else {
+            console.log(data);
+          }
+        });
+    }
   };
 
   return (
@@ -348,7 +352,16 @@ const PersonalInfo = () => {
                         ref={addressRef}
                         type="number"
                         placeholder="Change your USDT address"
-                        class="input input-bordered w-full"
+                        class="input input-bordered w-full mb-5"
+                        required
+                      />
+                    </div>
+                    <div>
+                      <input
+                        ref={withdrawalRef}
+                        type="number"
+                        placeholder="Withdrawal password"
+                        class="input input-bordered w-full "
                         required
                       />
                     </div>

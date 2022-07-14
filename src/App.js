@@ -21,6 +21,10 @@ import TeamReport from "./components/TeamReport/TeamReport";
 import DepositAndWithdrawal from "./components/TeamReport/DepositAndWithdrawal";
 import Deposit from "./components/Deposit/Deposit";
 import ChangePassword from "./components/PersonalInfo/ChangePassword";
+import Message from "./components/Message/Message";
+import Transiction from "./components/Transiction/Transiction";
+import DepositeHistory from "./components/Transiction/DepositHistory";
+import WithdrawalHistory from "./components/Transiction/WithdrawalHistory";
 
 function App() {
   return (
@@ -73,6 +77,15 @@ function App() {
         <Route
           path="/change-password"
           element={<ChangePassword></ChangePassword>}
+        ></Route>
+        <Route path="/message" element={<Message></Message>}></Route>
+        <Route
+          path="/deposit-history"
+          element={<DepositeHistory></DepositeHistory>}
+        ></Route>
+        <Route
+          path="/withdrawal-history"
+          element={<WithdrawalHistory></WithdrawalHistory>}
         ></Route>
         <Route path="/*" element={<NotFound></NotFound>}></Route>
       </Routes>

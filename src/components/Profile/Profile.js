@@ -86,7 +86,7 @@ const Profile = () => {
             <img src={vip} alt="" />
             <h1>VIP</h1>
           </Link>
-          <Link to="/transaction" className="flex flex-col items-center">
+          <Link to="/withdrawal-history" className="flex flex-col items-center">
             <img src={transection} alt="" />
             <h1>Transaction</h1>
           </Link>
