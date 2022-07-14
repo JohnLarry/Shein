@@ -1,39 +1,114 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { authkey } from "../Login/authkey";
 
 const Message = () => {
-  const [message, setMessage] = useState();
-  //   var allHistory = new FormData();
-  //   allHistory.append("auth", authkey);
-  //   allHistory.append("logged", localStorage.getItem("auth"));
-  //   allHistory.append("history", "");
-  //   allHistory.append("all", "");
+  const [messageLimit, setMessageLimit] = useState();
+  const [message, setMessage] = useState([]);
 
-  //   fetch("https://mining-nfts.com/api/", {
-  //     method: "POST",
-  //     body: allHistory,
-  //   })
-  //     .then((res) => res.json())
-  //     .then((data) => {
-  //       console.log(data);
+  useEffect(() => {
+    var allHistory = new FormData();
+    allHistory.append("auth", authkey);
+    allHistory.append("logged", localStorage.getItem("auth"));
+    allHistory.append("history", "");
+    allHistory.append("limit", 500);
 
-  //       if (data.status == 200) {
-  //         console.log(data);
-  //         setMessage(data);
-  //       } else {
-  //         console.log(data);
-  //       }
-  //     });
+    fetch("https://mining-nfts.com/api/", {
+      method: "POST",
+      body: allHistory,
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        console.log(data);
+
+        if (data.status == 200) {
+          console.log(data.message);
+          setMessage(data?.message);
+        } else {
+          console.log(data);
+        }
+      });
+  }, []);
+
+  let a1 = message?.slice(0, 50);
+  let a2 = message?.slice(0, 100);
+  let a3 = message?.slice(0, 200);
+  let a4 = message?.slice(0, 300);
+  let a5 = message?.slice(0, 400);
+  let a6 = message?.slice(0, 500);
+  let a7 = message;
+
+  let d = a7;
+
+  if (messageLimit == 1) {
+    d = a1;
+  } else if (messageLimit == 2) {
+    d = a2;
+  } else if (messageLimit == 3) {
+    d = a3;
+  } else if (messageLimit == 4) {
+    d = a4;
+  } else if (messageLimit == 5) {
+    d = a5;
+  } else if (messageLimit == 6) {
+    d = a6;
+  } else if (messageLimit == 7) {
+    d = a7;
+  }
+
   return (
     <div className="container max-w-[1080px] mx-auto p-5">
-      <div>
+      <div className="flex justify-between items-center mb-5">
         <h1>Notification</h1>
+        <select
+          id="messageLimit"
+          defaultValue="Select Limit"
+          onChange={(e) => setMessageLimit(e.target.value)}
+          className="select select-secondary select-bordered w-[150px] max-w-xs"
+        >
+          <option vlaue={7} selected>
+            All
+          </option>
+          <option value={1}>50</option>
+          <option value={2}>100</option>
+          <option value={3}>200</option>
+          <option value={4}>300</option>
+          <option value={5}>400</option>
+          <option value={6}>500</option>
+        </select>
       </div>
-      {/* <div className="">
-        {message.map((mes) => (
-          <div></div>
+      <div className="grid grid-cols-1 gap-5">
+        {d?.map((m) => (
+          <div
+            key={m?.id}
+            className="card mx-auto bg-base-200 shadow-xl w-full p-5"
+          >
+            <div className="flex justify-between items-center">
+              <div className="flex gap-5 items-center">
+                <div class="avatar">
+                  <div class="w-16 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2">
+                    <img src="https://placeimg.com/192/192/people" />
+                  </div>
+                </div>
+                <div className="">
+                  <h1>{m?.type}</h1>
+                  <div className="max-w-[600px]">
+                    <h1>{m?.message}</h1>
+                  </div>
+                  <p>{m?.date}</p>
+                </div>
+              </div>
+              <div class="avatar">
+                <div class="w-20 rounded">
+                  <img
+                    src="https://placeimg.com/192/192/people"
+                    alt="Tailwind-CSS-Avatar-component"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
         ))}
-      </div> */}
+      </div>
     </div>
   );
 };

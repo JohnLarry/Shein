@@ -23,6 +23,7 @@ const DepositeHistory = () => {
       .then((res) => res.json())
       .then((depoHistoryData) => {
         if (depoHistoryData.status == 200) {
+          console.log(depoHistoryData?.message);
           setDipoHistory(depoHistoryData?.message);
         } else {
           navigate("/login");
