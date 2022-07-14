@@ -22,7 +22,6 @@ import DepositAndWithdrawal from "./components/TeamReport/DepositAndWithdrawal";
 import Deposit from "./components/Deposit/Deposit";
 import ChangePassword from "./components/PersonalInfo/ChangePassword";
 import Message from "./components/Message/Message";
-import Transiction from "./components/Transiction/Transiction";
 import DepositeHistory from "./components/Transiction/DepositHistory";
 import WithdrawalHistory from "./components/Transiction/WithdrawalHistory";
 
