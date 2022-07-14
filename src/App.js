@@ -19,6 +19,7 @@ import Home from "./components/Home/Home";
 import NotFound from "./components/NotFound/NotFound";
 import TeamReport from "./components/TeamReport/TeamReport";
 import DepositAndWithdrawal from "./components/TeamReport/DepositAndWithdrawal";
+import LockHistory from "./components/LockHistory/lockHistory";
 
 function App() {
   return (
@@ -49,7 +50,7 @@ function App() {
         <Route path="/wheel" element={<Wheel></Wheel>}></Route>
         <Route path="/dashboard" element={<Dashboard></Dashboard>}></Route>
         <Route path="/about" element={<About></About>}></Route>
-        <Route path="/order-grab" element={<OrderGrab></OrderGrab>}></Route>
+        <Route path="/order-grab/:id" element={<OrderGrab></OrderGrab>}></Route>
         <Route
           path="/order-history"
           element={<OrderHistory></OrderHistory>}
@@ -66,6 +67,10 @@ function App() {
         <Route
           path="/deposit-withdraw"
           element={<DepositAndWithdrawal></DepositAndWithdrawal>}
+        ></Route>
+        <Route
+          path="/lock-history"
+          element={<LockHistory></LockHistory>}
         ></Route>
         <Route path="/*" element={<NotFound></NotFound>}></Route>
       </Routes>
