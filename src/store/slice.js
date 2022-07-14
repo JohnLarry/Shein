@@ -115,6 +115,115 @@ export const userSlice = createSlice({
   },
 });
 
+export const teamreportSlice = createSlice({
+  name: "reports",
+  initialState: {
+    reports: {},
+  },
+
+  reducers: {
+    updateTeamReports: (state, action) => ({
+      ...state,
+      reports: action.payload,
+    }),
+  },
+});
+export const dashboardmessageSlice = createSlice({
+  name: "dashboardmessage",
+  initialState: {
+    message: {},
+  },
+
+  reducers: {
+    updateDashboardMessage: (state, action) => ({
+      ...state,
+      message: action.payload,
+    }),
+  },
+});
+
+export const teamdepositSlice = createSlice({
+  name: "deposit",
+  initialState: {
+    deposit: [
+      {
+        id: "1",
+        0: "1",
+        invite: "03985093485",
+        1: "03985093485",
+        username: "sohan",
+        2: "sohan",
+        email: "sohan@gmail.com",
+        3: "sohan@gmail.com",
+        password: "829e4a4a102526021855e3744bd8a86f",
+        4: "829e4a4a102526021855e3744bd8a86f",
+        secret_key: "1234",
+        5: "1234",
+        name: "O",
+        6: "O",
+        vip1_orders: "0",
+        7: "0",
+        main_balance: "108.243216",
+        8: "108.243216",
+        vip2_orders: "3",
+        9: "0",
+        vip3_orders: "",
+        10: "0",
+        telegram: "329084935",
+        11: "329084935",
+        whatsapp: "234567",
+        12: "234567",
+        vip4_orders: "0",
+        13: "0",
+        vip5_orders: "0",
+        14: "0",
+        refer: "TheoRpo",
+        15: "TheoRpo",
+        vip6_orders: "0",
+        16: "0",
+        phone: "45656",
+        17: "45656",
+        joindate: "2022-02-12 06:54:55",
+        18: "2022-02-12 06:54:55",
+        vip7_orders: "0",
+        19: "0",
+        dateofbirth: "",
+        20: "",
+        vip8_orders: "0",
+        21: "0",
+        block: "0",
+        22: "0",
+        vip9_orders: "0",
+        23: "0",
+        app: "ODI5ZTRhNGExMDI1MjYwMjE4NTVlMzc0NGJkOGE4NmY4MjllNGE0YTEwMjUyNjAyMTg1NWUzNzQ0YmQ4YTg2Zg==",
+        24: "ODI5ZTRhNGExMDI1MjYwMjE4NTVlMzc0NGJkOGE4NmY4MjllNGE0YTEwMjUyNjAyMTg1NWUzNzQ0YmQ4YTg2Zg==",
+        vip10_orders: "0",
+        25: "0",
+        ableToWork: "0",
+        26: "0",
+      },
+    ],
+  },
+  reducers: {
+    updateTeamDeposit: (state, action) => ({
+      ...state,
+      deposit: action.payload,
+    }),
+  },
+});
+
+export const teamwithdrawSlice = createSlice({
+  name: "withdraw",
+  initialState: {
+    withdraw: [],
+  },
+  reducers: {
+    updateTeamWithdraw: (state, action) => ({
+      ...state,
+      withdraw: action.payload,
+    }),
+  },
+});
 export const orderSlice = createSlice({
   name: "order",
   initialState: {
@@ -440,6 +549,11 @@ export const openpositionSlice = createSlice({
 const reducer = combineReducers({
   summary: summarySlice.reducer,
   user: userSlice.reducer,
+  reports: teamreportSlice.reducer,
+  deposit: teamdepositSlice.reducer,
+  withdraw: teamwithdrawSlice.reducer,
+  dashboardmessage: dashboardmessageSlice.reducer,
+
   order: orderSlice.reducer,
   chart: chartSlice.reducer,
   group: groupSlice.reducer,
@@ -457,6 +571,11 @@ const reducer = combineReducers({
 
 export const { updateSummary } = summarySlice.actions;
 export const { updateUser } = userSlice.actions;
+export const { updateTeamReports } = teamreportSlice.actions;
+export const { updateTeamDeposit } = teamdepositSlice.actions;
+export const { updateTeamWithdraw } = teamwithdrawSlice.actions;
+export const { updateDashboardMessage } = dashboardmessageSlice.actions;
+
 export const {
   edit,
   increaselots,

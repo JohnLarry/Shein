@@ -2,17 +2,36 @@ import React, { useState, useEffect } from "react";
 import "./OrderGrab.css";
 import { useSelector, useDispatch } from "react-redux/es/exports";
 import { authkey } from "../Login/authkey";
+import { useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+
+import { updateSummary } from "../../store/slice";
+import { updateUser } from "../../store/slice";
 const OrderGrab = () => {
   const dispatch = useDispatch();
+  const { id } = useParams();
+  var profit = localStorage.getItem("claimProfit");
+  var arrayData = [];
+  const navigate = useNavigate();
+
   const [status, setStatus] = useState("");
   const [showOrderCompletedTodayModal, setShowOrderCompletedTodayModal] =
     useState(false);
+  const [showOrderClaimModal, setShowOrderClaimModal] = useState(false);
   const [showOrderErrorModal, setShowOrderErrorModal] = useState(false);
   const [showOrderPageModal, setShowOrderPageModal] = useState(false);
-  const user = useSelector((state) => state.user.data);
-  var pack_level = 1;
+  const [grabProducts, setGrabProducts] = useState({});
+  const [showClaimSuccessModal, setShowClaimSuccessModal] = useState(false);
+  const [showClaimFailedModal, setShowClaimFailedyModal] = useState(false);
+
+  const [isLoading, setIsLoading] = useState(false);
+  var pack_level = id;
   var grab = new FormData();
-  console.log(user[0]["ableToWork"]);
+  var grabSubmitAll = new FormData();
+  grabSubmitAll.append("submit_product", "");
+  grabSubmitAll.append("auth", authkey);
+  grabSubmitAll.append("logged", localStorage.getItem("auth"));
+
   grab.append("pack_level", pack_level);
   grab.append("grab", "");
   grab.append("auth", authkey);
@@ -24,10 +43,21 @@ const OrderGrab = () => {
     })
       .then((res) => res.json())
       .then((data) => {
-        if (data.status == 200) {
+        if (data.status == 200 && data.message.left_order == 0) {
           console.log("Show order page");
+          setGrabProducts(data.message);
+          setShowOrderClaimModal(true);
+
+          setStatus("200");
+          console.log(data);
+        }
+        if (data.status == 200 && data.message.left_order > 0) {
+          console.log("Show order page");
+          setGrabProducts(data.message);
+          console.log(data.message);
           setShowOrderPageModal(true);
           closeModal();
+
           setStatus("200");
           console.log(data);
         }
@@ -51,8 +81,10 @@ const OrderGrab = () => {
       setShowOrderCompletedTodayModal(false);
       setShowOrderErrorModal(false);
       setShowOrderPageModal(false);
+      setShowClaimFailedyModal(false);
+      setShowClaimSuccessModal(false);
       setStatus("");
-    }, 5000);
+    }, 60000);
   };
   const closeOrderPageModal = () => {
     setShowOrderPageModal(false);
@@ -66,6 +98,70 @@ const OrderGrab = () => {
     setShowOrderCompletedTodayModal(false);
     setStatus("");
   };
+  const closeOrderClaimModal = () => {
+    setShowOrderClaimModal(false);
+    setStatus("");
+  };
+  const Claim = () => {
+    setIsLoading(true);
+    fetch("https://mining-nfts.com/api/", {
+      method: "POST",
+      body: grabSubmitAll,
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.status == 200) {
+          console.log("Show order page");
+          setGrabProducts(data.message);
+          setShowOrderClaimModal(false);
+          setShowClaimSuccessModal(true);
+        }
+        if (data.status == 100) {
+          setShowOrderClaimModal(false);
+          setShowClaimFailedyModal(true);
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+    setIsLoading(false);
+  };
+  const closeClaimSuccessModal = () => {
+    setShowClaimSuccessModal(false);
+    setStatus("");
+  };
+  const closeClaimFailedModal = () => {
+    setShowClaimFailedyModal(false);
+    setStatus("");
+  };
+
+  var dashboard = new FormData();
+  dashboard.append("dashboard", "");
+  dashboard.append("auth", authkey);
+  dashboard.append("logged", localStorage.getItem("auth"));
+
+  const [dashboardData, setDashBoardData] = useState({});
+  const [dashboardDataPack, setDashBoardDataPack] = useState([]);
+  const [totalProfit, setTotalProfit] = useState(0);
+  const [returnedData, setReturnedData] = useState(0);
+  useEffect(() => {
+    fetch("https://mining-nfts.com/api/", {
+      method: "POST",
+      body: dashboard,
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.status == 200) {
+          dispatch(updateSummary(data.message.pack));
+          dispatch(updateUser(data.message.user));
+          setDashBoardData(data.message);
+          setDashBoardDataPack(data.message.pack);
+        } else {
+          navigate("/login");
+        }
+      });
+  }, []);
+  const user = useSelector((state) => state.user.data);
   return (
     <div>
       <div className="  ">
@@ -119,7 +215,13 @@ const OrderGrab = () => {
                     <button
                       className="btn text-white w-full font-bold bg-gray-900"
                       onClick={grabOrder}
-                      disabled={user[0]["ableToWork"] == "1" ? false : true}
+                      disabled={
+                        user[0].ableToWork == "1"
+                          ? false
+                          : user[0].ableToWork == "0"
+                          ? true
+                          : false
+                      }
                     >
                       Grab Now
                     </button>
@@ -259,7 +361,50 @@ const OrderGrab = () => {
                         <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" />
                       </svg>
                     </div>
-                    {status === "200" ? (
+
+                    <>
+                      <div className="flex flex-col justify-between p-5   rounded-t bg-slate-300 bg-white-300 text-black">
+                        <p className="font-bold text-center text-2xl text-wrap">
+                          Your order is completed for today
+                        </p>
+                      </div>
+                    </>
+                  </div>
+                </div>
+              </div>
+              <div className="opacity-25 fixed inset-0 z-40 bg-black"></div>
+            </>
+          ) : null}
+        </div>
+        <div>
+          {showOrderClaimModal ? (
+            <>
+              <div className="justify-center items-center flex overflow-x-hidden overflow-y-auto fixed inset-0 z-50 outline-none focus:outline-none ">
+                <div className="relative  my-6 mx-auto ">
+                  {/*content*/}
+
+                  <div className=" reseller-popup w-90 mr-5 ml-5 sm:w-100 md:w-90 lg:w-90 xl:w-90 sm:h-60 md:h-50 lg:h-45 xl:h-41 border-0 rounded-lg shadow-lg relative flex flex-col w-full bg-white outline-none focus:outline-none border-green-500">
+                    <div
+                      className="flex justify-end bg-[#CBD5E1]"
+                      onClick={() => {
+                        closeOrderClaimModal();
+                      }}
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        stroke="#0A459F"
+                        fill="#FFFFFF"
+                        stroke-width="0"
+                        viewBox="0 0 24 24"
+                        height="1em"
+                        width="1em"
+                      >
+                        <path fill="none" d="M0 0h24v24H0z" />
+                        <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" />
+                      </svg>
+                    </div>
+
+                    {status === "success" ? (
                       <div className="p-4">
                         <div className="flex justify-center mt-2">
                           <img src={"/checked.svg"} alt="Checked.svg" />
@@ -280,9 +425,39 @@ const OrderGrab = () => {
                     ) : (
                       <>
                         <div className="flex flex-col justify-between p-5   rounded-t bg-slate-300 bg-white-300 text-black">
-                          <p className="font-bold text-center text-2xl text-wrap">
-                            Show order completed for today
-                          </p>
+                          <p className="font-bold text-center text-2xl text-wrap"></p>
+
+                          <p>Claim amount: {profit} USD</p>
+
+                          <button
+                            className="btn-primary rounded-lg mt-4 py-2"
+                            onClick={() => {
+                              Claim();
+                            }}
+                          >
+                            {isLoading ? (
+                              <div class="text-center">
+                                <svg
+                                  role="status"
+                                  class="inline mr-2 w-8 h-8 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600"
+                                  viewBox="0 0 100 101"
+                                  fill="none"
+                                  xmlns="http://www.w3.org/2000/svg"
+                                >
+                                  <path
+                                    d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z"
+                                    fill="currentColor"
+                                  />
+                                  <path
+                                    d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z"
+                                    fill="currentFill"
+                                  />
+                                </svg>
+                              </div>
+                            ) : (
+                              <span>Claim</span>
+                            )}
+                          </button>
                         </div>
                       </>
                     )}
@@ -321,33 +496,28 @@ const OrderGrab = () => {
                       </svg>
                     </div>
 
-                    {status === "success" ? (
-                      <div className="p-4">
-                        <div className="flex justify-center mt-2">
-                          <img src={"/checked.svg"} alt="Checked.svg" />
-                        </div>
-                        <div>
-                          <p className="text-black font-bold text-center"></p>
-                        </div>
-                        <div className="flex justify-center mt-6">
+                    <>
+                      <div className="flex flex-col justify-between p-5   rounded-t bg-slate-300 bg-white-300 text-black">
+                        <p className="font-bold text-center text-2xl text-wrap text-green-600">
+                          Order sent successfully
+                        </p>
+                        <p> Order left : {grabProducts.left_order}</p>
+
+                        <p className="text-indigo-600">
                           {" "}
-                          <button
-                            className="bg-green-500 rounded text-white capitalized  font-bold  px-6 py-2 text-sm outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
-                            type="button"
-                          >
-                            Ok
-                          </button>
-                        </div>
+                          {grabProducts.product.title}
+                        </p>
+                        <img src={grabProducts.product.image} />
+                        <button
+                          className="btn-primary mt-2 py-2 rounded-lg"
+                          onClick={() => {
+                            closeOrderPageModal();
+                          }}
+                        >
+                          Done
+                        </button>
                       </div>
-                    ) : (
-                      <>
-                        <div className="flex flex-col justify-between p-5   rounded-t bg-slate-300 bg-white-300 text-black">
-                          <p className="font-bold text-center text-2xl text-wrap">
-                            Show order page
-                          </p>
-                        </div>
-                      </>
-                    )}
+                    </>
                   </div>
                 </div>
               </div>
@@ -382,33 +552,97 @@ const OrderGrab = () => {
                       </svg>
                     </div>
 
-                    {status ? (
-                      <div className="p-4">
-                        <div className="flex justify-center mt-2">
-                          <img src={"/checked.svg"} alt="Checked.svg" />
-                        </div>
-                        <div>
-                          <p className="text-black font-bold text-center"></p>
-                        </div>
-                        <div className="flex justify-center mt-6">
-                          {" "}
-                          <button
-                            className="bg-green-500 rounded text-white capitalized  font-bold  px-6 py-2 text-sm outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
-                            type="button"
-                          >
-                            Ok
-                          </button>
-                        </div>
+                    <>
+                      <div className="flex flex-col justify-between p-5   rounded-t bg-slate-300 bg-white-300 text-black">
+                        <p className="font-bold text-center text-sm text-red-600 text-wrap">
+                          Error occured try again later!
+                        </p>
                       </div>
-                    ) : (
-                      <>
-                        <div className="flex flex-col justify-between p-5   rounded-t bg-slate-300 bg-white-300 text-black">
-                          <p className="font-bold text-center text-2xl text-wrap">
-                            Show error occured
-                          </p>
-                        </div>
-                      </>
-                    )}
+                    </>
+                  </div>
+                </div>
+              </div>
+              <div className="opacity-25 fixed inset-0 z-40 bg-black"></div>
+            </>
+          ) : null}
+        </div>
+
+        <div>
+          {showClaimSuccessModal ? (
+            <>
+              <div className="justify-center items-center flex overflow-x-hidden overflow-y-auto fixed inset-0 z-50 outline-none focus:outline-none ">
+                <div className="relative  my-6 mx-auto ">
+                  {/*content*/}
+                  <div className=" reseller-popup w-90 mr-5 ml-5 sm:w-100 md:w-90 lg:w-90 xl:w-90 sm:h-60 md:h-50 lg:h-45 xl:h-41 border-0 rounded-lg shadow-lg relative flex flex-col w-full bg-white outline-none focus:outline-none border-green-500">
+                    <div
+                      className="flex justify-end bg-[#CBD5E1]"
+                      onClick={() => {
+                        closeClaimSuccessModal();
+                      }}
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        stroke="#0A459F"
+                        fill="#FFFFFF"
+                        stroke-width="0"
+                        viewBox="0 0 24 24"
+                        height="1em"
+                        width="1em"
+                      >
+                        <path fill="none" d="M0 0h24v24H0z" />
+                        <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" />
+                      </svg>
+                    </div>
+
+                    <>
+                      <div className="flex flex-col justify-between p-5   rounded-t bg-slate-300 bg-white-300 text-black">
+                        <p className="font-bold text-center text-sm text-green-600 text-wrap">
+                          Your Claimed product successfully
+                        </p>
+                      </div>
+                    </>
+                  </div>
+                </div>
+              </div>
+              <div className="opacity-25 fixed inset-0 z-40 bg-black"></div>
+            </>
+          ) : null}
+        </div>
+
+        <div>
+          {showClaimFailedModal ? (
+            <>
+              <div className="justify-center items-center flex overflow-x-hidden overflow-y-auto fixed inset-0 z-50 outline-none focus:outline-none ">
+                <div className="relative  my-6 mx-auto ">
+                  {/*content*/}
+                  <div className=" reseller-popup w-90 mr-5 ml-5 sm:w-100 md:w-90 lg:w-90 xl:w-90 sm:h-60 md:h-50 lg:h-45 xl:h-41 border-0 rounded-lg shadow-lg relative flex flex-col w-full bg-white outline-none focus:outline-none border-green-500">
+                    <div
+                      className="flex justify-end bg-[#CBD5E1]"
+                      onClick={() => {
+                        closeClaimFailedModal();
+                      }}
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        stroke="#0A459F"
+                        fill="#FFFFFF"
+                        stroke-width="0"
+                        viewBox="0 0 24 24"
+                        height="1em"
+                        width="1em"
+                      >
+                        <path fill="none" d="M0 0h24v24H0z" />
+                        <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" />
+                      </svg>
+                    </div>
+
+                    <>
+                      <div className="flex flex-col justify-between p-5   rounded-t bg-slate-300 bg-white-300 text-black">
+                        <p className="font-bold text-center text-sm text-red-600 text-wrap">
+                          Error occured try again later!
+                        </p>
+                      </div>
+                    </>
                   </div>
                 </div>
               </div>
