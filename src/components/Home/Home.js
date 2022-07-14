@@ -1,3 +1,5 @@
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import Logo from "../../images/8666358.svg";
 import smallLogo from "../../images/fd8ca81.png";
 // images
@@ -12,52 +14,118 @@ import inviteFriends from "../../images/8da3f99.svg";
 import taskImg from "../../images/task1.jpg";
 import Navber from "../Navber/Navber";
 import { Link } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
+import { authkey } from "../Login/authkey";
 
+import { updateSummary } from "../../store/slice";
+import { updateUser } from "../../store/slice";
+import { primary } from "daisyui/src/colors";
+import { updateDashboardMessage } from "../../store/slice";
 const Home = () => {
-  const tasks = [
-    {
-      _id: 1,
-      task: "VIP-1",
-      img: "../../images/task1.jpg",
-      name: "SHEIN",
-      amount: "20 0.4%/60 orders",
-    },
-    {
-      _id: 2,
-      task: "VIP-2",
-      img: "../../images/task1.jpg",
-      name: "SHEIN",
-      amount: "20 0.4%/60 orders",
-    },
-    {
-      _id: 3,
-      task: "VIP-3",
-      img: "../../images/task1.jpg",
-      name: "SHEIN",
-      amount: "20 0.4%/60 orders",
-    },
-    {
-      _id: 4,
-      task: "VIP-4",
-      img: "../../images/task1.jpg",
-      name: "SHEIN",
-      amount: "20 0.4%/60 orders",
-    },
-    {
-      _id: 5,
-      task: "VIP-5",
-      img: "../../images/task1.jpg",
-      name: "SHEIN",
-      amount: "20 0.4%/60 orders",
-    },
-    {
-      _id: 6,
-      task: "VIP-6",
-      img: "../../images/task1.jpg",
-      name: "SHEIN",
-      amount: "20 0.4%/60 orders",
-    },
-  ];
+  const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+  const format = (x) => {
+    return Number.parseFloat(x).toFixed(2);
+  };
+  const dispatch = useDispatch();
+  var dashboard = new FormData();
+
+  var arrayData = [];
+  const navigate = useNavigate();
+  dashboard.append("dashboard", "");
+  dashboard.append("auth", authkey);
+  dashboard.append("logged", localStorage.getItem("auth"));
+
+  const [dashboardData, setDashBoardData] = useState({});
+  const [dashboardDataPack, setDashBoardDataPack] = useState([]);
+  const [totalProfit, setTotalProfit] = useState(0);
+  const [returnedData, setReturnedData] = useState(0);
+  const [lockFundModal, setLockFundModal] = useState(false);
+  const [lockFundSuccess, setLockFundSuccess] = useState(false);
+  const [lockFundError, setLockFundError] = useState(false);
+  const [fundLockAmount, setFundLockAmount] = useState(0);
+  const [responseMessage, setResponseMessage] = useState("");
+  var lock = new FormData();
+  lock.append("lock", "");
+  lock.append("amount", fundLockAmount);
+  lock.append("auth", authkey);
+  lock.append("logged", localStorage.getItem("auth"));
+
+  useEffect(() => {
+    fetch("https://mining-nfts.com/api/", {
+      method: "POST",
+      body: dashboard,
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.status == 200) {
+          dispatch(updateSummary(data.message.pack));
+          dispatch(updateUser(data.message.user));
+          dispatch(updateDashboardMessage(data.message));
+
+          setDashBoardData(data.message);
+          setDashBoardDataPack(data.message.pack);
+        } else {
+          navigate("/login");
+        }
+      });
+  }, []);
+
+  setTimeout(() => {
+    var bodydata = new FormData();
+    bodydata.append("data", JSON.stringify(arrayData));
+
+    fetch("https://mining-nfts.com/api/getTopNumber.php", {
+      method: "POST",
+      body: bodydata, // ["1", "2", "3"]
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        setReturnedData(data);
+        localStorage.setItem("claimProfit", returnedData);
+      });
+  }, 1000);
+  const gotoGrabTask = (grab_id) => {
+    navigate("/order-grab?data=" + { grab_id });
+  };
+  const addLockFund = () => {
+    fetch("https://mining-nfts.com/api/", {
+      method: "POST",
+      body: lock,
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.status == 200) {
+          setLockFundModal(false);
+          setResponseMessage(data.message);
+          setLockFundSuccess(true);
+        }
+        if (data.status == 100) {
+          setLockFundModal(false);
+          setResponseMessage(data.message);
+          setLockFundError(true);
+        }
+      });
+  };
+  const showLockFundModal = () => {
+    setLockFundModal(true);
+  };
+  const closeFundModal = () => {
+    setLockFundModal(false);
+  };
+  const closeFundErrorModal = () => {
+    setLockFundError(false);
+  };
+  const closeFundSuccessModal = () => {
+    setLockFundSuccess(false);
+  };
+  const updateFundLock = (e) => {
+    e.preventDefault();
+    setFundLockAmount(e.target.value);
+  };
+  const dashboardMessage = useSelector(
+    (state) => state.dashboardmessage.message
+  );
 
   return (
     <>
@@ -122,8 +190,23 @@ const Home = () => {
         </div>
         <div className="card mx-auto bg-base-200 shadow-xl w-full">
           <div className="card-body">
-            <h1>Total</h1>
-            <h1>0</h1>
+            <div className="flex justify-between">
+              <h1>Total</h1>
+              <h1>0</h1>
+            </div>
+
+            <div className="flex justify-between">
+              <div className="flex ">
+                <h1>Locked asset</h1>
+                <button
+                  className="ml-2 p-1 rounded-sm bg-green-600 text-white"
+                  onClick={showLockFundModal}
+                >
+                  Add Fund
+                </button>
+              </div>
+              <h1>{dashboardMessage.locked_asset}</h1>
+            </div>
             <div className="flex justify-between">
               <h1>Today's profits</h1>
               <h1>0</h1>
@@ -137,6 +220,161 @@ const Home = () => {
               <h1>0</h1>
             </div>
           </div>
+        </div>
+        <div>
+          {lockFundModal ? (
+            <>
+              <div className="justify-center items-center flex overflow-x-hidden overflow-y-auto fixed inset-0 z-50 outline-none focus:outline-none ">
+                <div className="relative  my-6 mx-auto ">
+                  {/*content*/}
+
+                  <div className=" reseller-popup w-90 mr-5 ml-5 sm:w-100 md:w-90 lg:w-90 xl:w-90 sm:h-60 md:h-50 lg:h-45 xl:h-41 border-0 rounded-lg shadow-lg relative flex flex-col w-full bg-white outline-none focus:outline-none border-green-500">
+                    <div
+                      className="flex justify-end bg-[#CBD5E1]"
+                      onClick={() => {
+                        closeFundModal();
+                      }}
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        stroke="#0A459F"
+                        fill="#FFFFFF"
+                        stroke-width="0"
+                        viewBox="0 0 24 24"
+                        height="1em"
+                        width="1em"
+                      >
+                        <path fill="none" d="M0 0h24v24H0z" />
+                        <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" />
+                      </svg>
+                    </div>
+
+                    <div className="flex flex-col justify-between p-5   rounded-t bg-slate-300 bg-white-300 text-black h-80">
+                      <p className="font-bold text-center text-2xl text-wrap text-green-600">
+                        Add fund
+                      </p>
+
+                      <input
+                        type="text"
+                        placeholder="Amount"
+                        onChange={updateFundLock}
+                      />
+
+                      <button
+                        className="btn-primary mt-2 py-2 rounded-lg"
+                        onClick={() => {
+                          addLockFund();
+                        }}
+                      >
+                        Add
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className="opacity-25 fixed inset-0 z-40 bg-black"></div>
+            </>
+          ) : null}
+        </div>
+        <div>
+          {lockFundSuccess ? (
+            <>
+              <div className="justify-center items-center flex overflow-x-hidden overflow-y-auto fixed inset-0 z-50 outline-none focus:outline-none ">
+                <div className="relative  my-6 mx-auto ">
+                  {/*content*/}
+
+                  <div className=" reseller-popup w-90 mr-5 ml-5 sm:w-100 md:w-90 lg:w-90 xl:w-90 sm:h-60 md:h-50 lg:h-45 xl:h-41 border-0 rounded-lg shadow-lg relative flex flex-col w-full bg-white outline-none focus:outline-none border-green-500">
+                    <div
+                      className="flex justify-end bg-[#CBD5E1]"
+                      onClick={() => {
+                        closeFundSuccessModal();
+                      }}
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        stroke="#0A459F"
+                        fill="#FFFFFF"
+                        stroke-width="0"
+                        viewBox="0 0 24 24"
+                        height="1em"
+                        width="1em"
+                      >
+                        <path fill="none" d="M0 0h24v24H0z" />
+                        <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" />
+                      </svg>
+                    </div>
+
+                    <div className="flex flex-col justify-between p-5   rounded-t bg-slate-300 bg-white-300 text-black h-80">
+                      <p className="font-bold text-center text-2xl text-wrap text-green-600">
+                        Fund added successfully
+                      </p>
+                      <div className="flex justify-center ">
+                        <button
+                          className="btn-primary mt-2 py-2 rounded-lg"
+                          onClick={() => {
+                            closeFundSuccessModal();
+                          }}
+                        >
+                          Close
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className="opacity-25 fixed inset-0 z-40 bg-black"></div>
+            </>
+          ) : null}
+        </div>
+        <div>
+          {lockFundError ? (
+            <>
+              <div className="justify-center items-center flex overflow-x-hidden overflow-y-auto fixed inset-0 z-50 outline-none focus:outline-none ">
+                <div className="relative  my-6 mx-auto ">
+                  {/*content*/}
+
+                  <div className=" reseller-popup w-90 mr-5 ml-5 sm:w-100 md:w-90 lg:w-90 xl:w-90 sm:h-60 md:h-50 lg:h-45 xl:h-41 border-0 rounded-lg shadow-lg relative flex flex-col w-full bg-white outline-none focus:outline-none border-green-500">
+                    <div
+                      className="flex justify-end bg-[#CBD5E1]"
+                      onClick={() => {
+                        closeFundErrorModal();
+                      }}
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        stroke="#0A459F"
+                        fill="#FFFFFF"
+                        stroke-width="0"
+                        viewBox="0 0 24 24"
+                        height="1em"
+                        width="1em"
+                      >
+                        <path fill="none" d="M0 0h24v24H0z" />
+                        <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" />
+                      </svg>
+                    </div>
+
+                    <div className="flex flex-col justify-between p-5   rounded-t bg-slate-300 bg-white-300 text-black h-80">
+                      <p className="font-bold text-center text-2xl text-wrap text-red-600">
+                        {responseMessage}
+                      </p>
+                      <div className="flex justify-center ">
+                        <button
+                          className="btn-primary mt-2 py-2 rounded-lg"
+                          onClick={() => {
+                            closeFundErrorModal();
+                          }}
+                        >
+                          Close
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className="opacity-25 fixed inset-0 z-40 bg-black"></div>
+            </>
+          ) : null}
         </div>
         <div className="grid grid-cols-2 gap-5 my-10">
           <Link to="/deposit" className="flex flex-col items-center">
@@ -175,21 +413,86 @@ const Home = () => {
         <div>
           <div className="my-8">
             <h1 className="text-center text-xl">Task Lobby</h1>
+            <h4 className="text-center text-xm text-green-500">
+              Today est. profit {""}
+              {returnedData} USD
+            </h4>
           </div>
           <div className="grid grid-cols-2 gap-5">
-            {tasks.map((task) => (
+            {dashboardDataPack.map((task) => (
               <div
-                key={task._id}
+                key={task.id}
                 className="card mx-auto bg-base-200 shadow-xl w-full p-5 relative"
               >
+                <input
+                  type="hidden"
+                  value={
+                    dashboardData.user[0][
+                      task.packName.toLowerCase() + "_orders"
+                    ] === null
+                      ? ""
+                      : arrayData.push(
+                          (dashboardData.user[0]["main_balance"] / 100) *
+                            task.commission_percent
+                        )
+                  }
+                />
+
                 <div>
-                  <img src={taskImg} className="rounded-lg" alt="" />
-                  <h1>{task.name}</h1>
-                  <p>Amount: {task.amount}</p>
+                  <img src={task.image} className="rounded-lg" alt="" />
+                  <h1>{task.marketName}</h1>
+                  <p>Percent: {task.commission_percent / 10}%</p>
+                  <p>Grab Amount: {task.grab_order}</p>
                 </div>
-                <span className="absolute bg-primary px-3 rounded-lg bottom-0 right-0">
-                  {task.task}
-                </span>
+                <div className="flex justify-between">
+                  {dashboardData.user[0][
+                    task.packName.toLowerCase() + "_orders"
+                  ] != task.grab_order ? (
+                    dashboardData.user[0].ableToWork === "1" ? (
+                      <button
+                        disabled={
+                          dashboardData.user[0][
+                            task.packName.toLowerCase() + "_orders"
+                          ] === null
+                            ? true
+                            : false
+                        }
+                        className={`btn  w-1/2 ${
+                          dashboardData.user[0].ableToWork === "1"
+                            ? "bg-success"
+                            : "bg-primary"
+                        }`}
+                        onClick={() => {
+                          navigate(`/order-grab/${task.id}`);
+                        }}
+                      >
+                        {dashboardData.user[0][
+                          task.packName.toLowerCase() + "_orders"
+                        ] === null
+                          ? "Locked"
+                          : dashboardData.user[0][
+                              task.packName.toLowerCase() + "_orders"
+                            ] != task.grab_order
+                          ? dashboardData.user[0].ableToWork === "1"
+                            ? "grab now"
+                            : "grab tomorrow"
+                          : "Grab  tomorrow"}
+                      </button>
+                    ) : (
+                      <button className={`btn  w-1/2 bg-primary`}>
+                        grab tomorrow
+                      </button>
+                    )
+                  ) : (
+                    <button className={`btn  w-1/2 bg-primary`}>
+                      grab tomorrow
+                    </button>
+                  )}
+
+                  <span className=" bg-primary px-3 rounded-lg pt-3 text-white ">
+                    {task.packName}
+                  </span>
+                </div>
               </div>
             ))}
           </div>
