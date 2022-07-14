@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import avater from "../../images/avater.png";
 import { useSelector } from "react-redux";
 import { TbEdit } from "react-icons/tb";
@@ -6,11 +6,15 @@ import { Link, Navigate, useNavigate } from "react-router-dom";
 import { IoIosArrowBack } from "react-icons/io";
 import { authkey } from "../Login/authkey";
 import { useForm } from "react-hook-form";
+import { toast, ToastContainer } from "react-toastify";
 
 const PersonalInfo = () => {
   const user = useSelector((state) => state.user.data);
   const [verify, setVerify] = useState();
   const navigate = useNavigate();
+  const verifyRef = useRef("");
+  const withdrawRef = useRef("");
+  const addressRef = useRef("");
 
   const handleVerify = () => {
     var verifyCode = new FormData();
@@ -43,12 +47,96 @@ const PersonalInfo = () => {
   } = useForm();
   const onSubmit = async (data) => {
     const verifyMessage = data.verification;
+    const loginPass = data.newLoginPass;
     console.log(verifyMessage);
     if (verifyMessage == verify?.message?.code) {
-      navigate("/change-password");
+      var loginPassChange = new FormData();
+      loginPassChange.append("auth", authkey);
+      loginPassChange.append("logged", localStorage.getItem("auth"));
+      loginPassChange.append("profile", "");
+      loginPassChange.append("set_login", "");
+      loginPassChange.append("login", loginPass);
+
+      fetch("https://mining-nfts.com/api/", {
+        method: "POST",
+        body: loginPassChange,
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          console.log(data);
+
+          if (data.status == 200) {
+            console.log(data);
+            reset();
+            toast.success(data.message);
+            navigate("/profile");
+          } else {
+            console.log(data);
+          }
+        });
     } else {
       console.log("Dont Match");
     }
+  };
+  const handleWithdrawVerify = (e) => {
+    e.preventDefault();
+    const verifyWithdraw = verifyRef.current.value;
+    const newWithdrawPass = withdrawRef.current.value;
+    if (verifyWithdraw == verify?.message?.code) {
+      var withdrawPassChange = new FormData();
+      withdrawPassChange.append("auth", authkey);
+      withdrawPassChange.append("logged", localStorage.getItem("auth"));
+      withdrawPassChange.append("profile", "");
+      withdrawPassChange.append("set_code", "");
+      withdrawPassChange.append("code", newWithdrawPass);
+
+      fetch("https://mining-nfts.com/api/", {
+        method: "POST",
+        body: withdrawPassChange,
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          console.log(data);
+
+          if (data.status == 200) {
+            console.log(data);
+            toast.success(data.message);
+            navigate("/profile");
+          } else {
+            console.log(data);
+          }
+        });
+    } else {
+      console.log("Dont Match");
+    }
+  };
+  const handleAddress = (e) => {
+    e.preventDefault();
+    const addressChange = addressRef.current.value;
+
+    var changeAddress = new FormData();
+    changeAddress.append("auth", authkey);
+    changeAddress.append("logged", localStorage.getItem("auth"));
+    changeAddress.append("profile", "");
+    changeAddress.append("set_usdt", "");
+    changeAddress.append("address", addressChange);
+
+    fetch("https://mining-nfts.com/api/", {
+      method: "POST",
+      body: changeAddress,
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        console.log(data);
+
+        if (data.status == 200) {
+          console.log(data);
+          toast.success(data.message);
+          navigate("/profile");
+        } else {
+          console.log(data);
+        }
+      });
   };
 
   return (
@@ -140,18 +228,30 @@ const PersonalInfo = () => {
             <label for="my-modal-4" class="modal cursor-pointer">
               <label class="modal-box relative" for="">
                 <h3 class="text-2xl text-center font-bold mb-5">
-                  Verification Code
+                  Change Login Password
                 </h3>
                 <form onSubmit={handleSubmit(onSubmit)}>
                   <div className="form-control">
                     <input
                       type="number"
+                      placeholder="New Login Password"
+                      className="input input-bordered mb-5"
+                      {...register("newLoginPass", {
+                        required: true,
+                      })}
+                    />
+                    {errors.newLoginPass && <p>Login Password is required</p>}
+                  </div>
+                  <div className="form-control">
+                    <input
+                      type="number"
+                      placeholder="Verification Code"
                       className="input input-bordered"
                       {...register("verification", {
                         required: true,
                       })}
                     />
-                    {errors.verification && <p>Password is required</p>}
+                    {errors.verification && <p>Verification is required</p>}
                   </div>
                   <div className="form-control mt-6">
                     <input
@@ -166,43 +266,107 @@ const PersonalInfo = () => {
 
             <div className="flex justify-between">
               <h1>Change Withdrawal Password</h1>
+              <label htmlFor="my-modal" className="btn modal-button btn-ghost">
+                <TbEdit className="text-2xl text-error "></TbEdit>
+              </label>
+
+              <input type="checkbox" id="my-modal" class="modal-toggle" />
+              <div class="modal">
+                <div class="modal-box">
+                  <h1 className="text-2xl">
+                    You will be charged 0.10$ for the SMS
+                  </h1>
+                  <p className="mt-10">Do you want to proceed?</p>
+                  <div className="flex gap-5 mt-5">
+                    <label htmlFor="my-modal-3" className="btn btn-error">
+                      NO
+                    </label>
+                    <label
+                      onClick={handleVerify}
+                      for="my-modal-6"
+                      className="btn btn-primary"
+                    >
+                      YES
+                    </label>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <input type="checkbox" id="my-modal-6" class="modal-toggle" />
+            <div class="modal modal-bottom sm:modal-middle">
+              <div class="modal-box">
+                <h3 class="text-2xl text-center font-bold mb-5">
+                  Withdrawal Verification Code
+                </h3>
+                <form onSubmit={handleWithdrawVerify}>
+                  <div>
+                    <input
+                      ref={withdrawRef}
+                      type="number"
+                      placeholder="New Withdrawal Password"
+                      class="input input-bordered w-full mb-5"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <input
+                      ref={verifyRef}
+                      type="number"
+                      placeholder="Verification Code"
+                      class="input input-bordered w-full"
+                      required
+                    />
+                  </div>
+                  <div class="form-control mt-6">
+                    <input
+                      className="btn btn-primary"
+                      type="submit"
+                      value="Verify"
+                    />
+                  </div>
+                </form>
+              </div>
+            </div>
+
+            <div className="flex justify-between">
+              <h1>Change USDT Address</h1>
               <label
-                htmlFor="my-modal-3"
+                htmlFor="my-modal-7"
                 className="btn modal-button btn-ghost"
               >
                 <TbEdit className="text-2xl text-error "></TbEdit>
               </label>
-
-              <input type="checkbox" id="my-modal-3" className="modal-toggle" />
-              <div className="modal p-5">
-                <div className="modal-box relative">
-                  <label
-                    htmlFor="my-modal-3"
-                    className="btn btn-sm btn-circle absolute right-2 top-2"
-                  >
-                    ✕
-                  </label>
-                  <form action="">
-                    <div className="form-control">
+              <input type="checkbox" id="my-modal-7" class="modal-toggle" />
+              <div class="modal">
+                <div class="modal-box max-w-[600px]">
+                  <h3 class="text-2xl text-center font-bold mb-5">
+                    Change USDT Address
+                  </h3>
+                  <form onSubmit={handleAddress}>
+                    <div>
                       <input
-                        type="password"
-                        placeholder="change password"
-                        className="input input-bordered input-secondary"
+                        ref={addressRef}
+                        type="number"
+                        placeholder="Change your USDT address"
+                        class="input input-bordered w-full"
+                        required
                       />
                     </div>
-                    <div className="form-control mt-6">
-                      <button className="btn btn-primary">
-                        Change Password
-                      </button>
+                    <div class="form-control mt-6">
+                      <input
+                        className="btn btn-primary"
+                        type="submit"
+                        value="Submit"
+                      />
                     </div>
                   </form>
                 </div>
               </div>
             </div>
-            <hr />
           </div>
         </div>
       </div>
+      <ToastContainer />
     </div>
   );
 };
