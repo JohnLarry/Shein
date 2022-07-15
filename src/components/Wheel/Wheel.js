@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import WheelComponent from "react-wheel-of-prizes";
 
 const Wheel = () => {
   const [winner, setWinner] = useState("0");
