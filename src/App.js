@@ -34,7 +34,9 @@ function App() {
   return (
     <div className="app">
       <Routes>
-        <Route path="/" element={<Home></Home>}></Route>
+        <Route path="/" element={<ProtectedRoute />}>
+          <Route path="/" element={<Home></Home>} />
+        </Route>
         <Route path="/login" element={<Login></Login>}></Route>
         <Route path="/register" element={<Register></Register>}></Route>
         <Route
