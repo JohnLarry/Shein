@@ -25,10 +25,11 @@ import ChangePassword from "./components/PersonalInfo/ChangePassword";
 import Message from "./components/Message/Message";
 import DepositeHistory from "./components/Transiction/DepositHistory";
 import WithdrawalHistory from "./components/Transiction/WithdrawalHistory";
-
+import GrabHistory from "./components/OrderHistory/GrabHistory/GrabHistory";
+import EarnHistory from "./components/OrderHistory/EarnHistory/EarnHistory";
 import LockHistory from "./components/LockHistory/lockHistory";
-
-
+import Transiction from "./components/Transiction/Transiction";
+import ProtectedRoute from "./protectedRoute";
 function App() {
   return (
     <div className="app">
@@ -36,6 +37,10 @@ function App() {
         <Route path="/" element={<Home></Home>}></Route>
         <Route path="/login" element={<Login></Login>}></Route>
         <Route path="/register" element={<Register></Register>}></Route>
+        <Route
+          path="/register/:invitecode"
+          element={<Register></Register>}
+        ></Route>
         <Route path="/deposit" element={<Deposit></Deposit>}></Route>
         <Route
           path="/invite-friends"
@@ -69,16 +74,18 @@ function App() {
           path="/rule-description"
           element={<RuleDescription></RuleDescription>}
         ></Route>
-        <Route
-          path="/team-report/agent"
-          element={<TeamReport></TeamReport>}
-        ></Route>
+        <Route path="/team-report/agent" element={<ProtectedRoute />}>
+          <Route
+            path="/team-report/agent"
+            element={<TeamReport></TeamReport>}
+          />
+        </Route>
+
         <Route
           path="/deposit-withdraw"
           element={<DepositAndWithdrawal></DepositAndWithdrawal>}
         ></Route>
         <Route
-
           path="/change-password"
           element={<ChangePassword></ChangePassword>}
         ></Route>
@@ -90,10 +97,30 @@ function App() {
         <Route
           path="/withdrawal-history"
           element={<WithdrawalHistory></WithdrawalHistory>}
-
+        ></Route>
+        <Route
           path="/lock-history"
           element={<LockHistory></LockHistory>}
-
+        ></Route>
+        <Route
+          path="/personal-info"
+          element={<PersonalInfo></PersonalInfo>}
+        ></Route>
+        <Route
+          path="/grab-history"
+          element={<GrabHistory></GrabHistory>}
+        ></Route>
+        <Route
+          path="/transaction"
+          element={<Transiction></Transiction>}
+        ></Route>
+        <Route
+          path="/deposit-history"
+          element={<DepositeHistory></DepositeHistory>}
+        ></Route>
+        <Route
+          path="/earn-history"
+          element={<EarnHistory></EarnHistory>}
         ></Route>
         <Route path="/*" element={<NotFound></NotFound>}></Route>
       </Routes>

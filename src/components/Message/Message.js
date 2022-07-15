@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import { IoIosArrowBack } from "react-icons/io";
 import { authkey } from "../Login/authkey";
-
 const Message = () => {
   const [messageLimit, setMessageLimit] = useState();
   const [message, setMessage] = useState([]);
@@ -58,6 +59,9 @@ const Message = () => {
   return (
     <div className="container max-w-[1080px] mx-auto p-5">
       <div className="flex justify-between items-center mb-5">
+        <Link to="/profile">
+          <IoIosArrowBack></IoIosArrowBack>
+        </Link>
         <h1>Notification</h1>
         <select
           id="messageLimit"
@@ -84,25 +88,15 @@ const Message = () => {
           >
             <div className="flex justify-between items-center">
               <div className="flex gap-5 items-center">
-                <div class="avatar">
-                  <div class="w-16 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2">
-                    <img src="https://placeimg.com/192/192/people" />
-                  </div>
-                </div>
                 <div className="">
                   <h1>{m?.type}</h1>
-                  <div className="max-w-[600px]">
-                    <h1>{m?.message}</h1>
-                  </div>
-                  <p>{m?.date}</p>
-                </div>
-              </div>
-              <div class="avatar">
-                <div class="w-20 rounded">
-                  <img
-                    src="https://placeimg.com/192/192/people"
-                    alt="Tailwind-CSS-Avatar-component"
+                  <div className="max-w-[600px]" id="dataSh"></div>
+                  <small
+                    className="flex pb-1  pt-1"
+                    dangerouslySetInnerHTML={{ __html: atob(m?.message) }}
                   />
+
+                  <small>{m?.date}</small>
                 </div>
               </div>
             </div>

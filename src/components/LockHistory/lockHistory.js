@@ -28,6 +28,12 @@ const LockHistory = () => {
   console.log(dashboardMessage);
   return (
     <div class="overflow-x-auto">
+      <div className="bg-base-200 p-5 rounded-xl mb-5 flex items-center justify-between">
+        <Link to="/profile">
+          <IoIosArrowBack></IoIosArrowBack>
+        </Link>
+        <h1 className="text-xl font-bold text-center">Lock History</h1>
+      </div>
       <table class="table table-zebra w-full">
         <thead>
           <tr>
@@ -41,15 +47,17 @@ const LockHistory = () => {
         </thead>
 
         <tbody>
-          {dashboardMessage.locked_history.map((item, index) => (
-            <tr>
-              <td>{item.username}</td>
-              <td>{item.amount}</td>
-              <td>{item.counter}</td>
-              <td>{item.status}</td>
-              <td>{item.time}</td>
-            </tr>
-          ))}
+          {Object.entries(dashboardMessage).length > 0
+            ? dashboardMessage.locked_history.map((item, index) => (
+                <tr>
+                  <td>{item.username}</td>
+                  <td>{item.amount}</td>
+                  <td>{item.counter}</td>
+                  <td>{item.status}</td>
+                  <td>{item.time}</td>
+                </tr>
+              ))
+            : "Loading"}
         </tbody>
       </table>
     </div>

@@ -23,6 +23,7 @@ const OrderGrab = () => {
   const [grabProducts, setGrabProducts] = useState({});
   const [showClaimSuccessModal, setShowClaimSuccessModal] = useState(false);
   const [showClaimFailedModal, setShowClaimFailedyModal] = useState(false);
+  const [assetStats, setAssetStats] = useState({});
 
   const [isLoading, setIsLoading] = useState(false);
   var pack_level = id;
@@ -32,6 +33,10 @@ const OrderGrab = () => {
   grabSubmitAll.append("auth", authkey);
   grabSubmitAll.append("logged", localStorage.getItem("auth"));
 
+  var grabStats = new FormData();
+  grabStats.append("grabSts", "");
+  grabStats.append("auth", authkey);
+  grabStats.append("logged", localStorage.getItem("auth"));
   grab.append("pack_level", pack_level);
   grab.append("grab", "");
   grab.append("auth", authkey);
@@ -76,6 +81,27 @@ const OrderGrab = () => {
         }
       });
   };
+  const grabOrderStats = () => {
+    fetch("https://mining-nfts.com/api/", {
+      method: "POST",
+      body: grabStats,
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.status == 200) {
+          setAssetStats(data.message);
+        }
+
+        if (data.status == 201) {
+          console.log(data);
+          setAssetStats(data.message);
+        }
+        if (data.status == 100) {
+          console.log("Error occured invalid pack id");
+        }
+      });
+  };
+
   const closeModal = () => {
     setTimeout(() => {
       setShowOrderCompletedTodayModal(false);
@@ -83,10 +109,12 @@ const OrderGrab = () => {
       setShowOrderPageModal(false);
       setShowClaimFailedyModal(false);
       setShowClaimSuccessModal(false);
+      grabOrderStats();
       setStatus("");
     }, 60000);
   };
   const closeOrderPageModal = () => {
+    grabOrderStats();
     setShowOrderPageModal(false);
     setStatus("");
   };
@@ -145,6 +173,7 @@ const OrderGrab = () => {
   const [totalProfit, setTotalProfit] = useState(0);
   const [returnedData, setReturnedData] = useState(0);
   useEffect(() => {
+    grabOrderStats();
     fetch("https://mining-nfts.com/api/", {
       method: "POST",
       body: dashboard,
@@ -244,7 +273,7 @@ const OrderGrab = () => {
                       Total assests Views
                     </div>
                     <div className="stat-value lg:text-4xl md:text-3xl text-2xl">
-                      89,400
+                      {assetStats.total_asset_view}
                     </div>
                     <div className="stat-desc">21% more than last month</div>
                   </div>
@@ -270,9 +299,9 @@ const OrderGrab = () => {
                       </div>
                       <div className="stat-title">Grabbed/ Total</div>
                       <div className="stat-value  lg:text-4xl md:text-3xl text-xl ">
-                        0/50
+                        {assetStats.left_order}/{assetStats.total_order}
                       </div>
-                      <div className="stat-desc">Jan 1st - Feb 1st</div>
+                      <div className="stat-desc">Today</div>
                     </div>
 
                     <div className="stat px-3 md:px-2 lg:px-5">
@@ -293,7 +322,7 @@ const OrderGrab = () => {
                       </div>
                       <div className="stat-title">Promotion bonus</div>
                       <div className="stat-value  lg:text-4xl md:text-3xl text-xl">
-                        4,200
+                        {assetStats.today_bonus}
                       </div>
                       <div className="stat-desc">↗︎ 400 (22%)</div>
                     </div>
@@ -316,18 +345,13 @@ const OrderGrab = () => {
                       </div>
                       <div className="stat-title">Profits today</div>
                       <div className="stat-value  lg:text-4xl md:text-3xl text-xl">
-                        <sup>$</sup>1,200
+                        <sup>$</sup>
+                        {assetStats.today_profit}
                       </div>
                       <div className="stat-desc">↘︎ 90 (14%)</div>
                     </div>
                   </div>
                 </div>
-              </div>
-
-              <div className="card-actions justify-end w-full my-7">
-                <button className="btn text-white w-full font-bold bg-gray-900">
-                  Order-Grab Rules
-                </button>
               </div>
             </section>
           </div>

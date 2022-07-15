@@ -1,12 +1,13 @@
 import React, { useEffect, useRef, useState } from "react";
 import avater from "../../images/avater.png";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { TbEdit } from "react-icons/tb";
 import { Link, Navigate, useNavigate } from "react-router-dom";
 import { IoIosArrowBack } from "react-icons/io";
 import { authkey } from "../Login/authkey";
 import { useForm } from "react-hook-form";
 import { toast, ToastContainer } from "react-toastify";
+import { updateDashboardMessage } from "../../store/slice";
 
 const PersonalInfo = () => {
   const user = useSelector((state) => state.user.data);
@@ -16,7 +17,23 @@ const PersonalInfo = () => {
   const withdrawRef = useRef("");
   const addressRef = useRef("");
   const withdrawalRef = useRef("");
-
+  const dispatch = useDispatch();
+  var dashboard = new FormData();
+  dashboard.append("dashboard", "");
+  dashboard.append("auth", authkey);
+  dashboard.append("logged", localStorage.getItem("auth"));
+  useEffect(() => {
+    fetch("https://mining-nfts.com/api/", {
+      method: "POST",
+      body: dashboard,
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.status == 200) {
+          dispatch(updateDashboardMessage(data.message));
+        }
+      });
+  }, []);
   const handleVerify = () => {
     var verifyCode = new FormData();
     verifyCode.append("auth", authkey);
@@ -231,6 +248,12 @@ const PersonalInfo = () => {
             <input type="checkbox" id="my-modal-4" class="modal-toggle" />
             <label for="my-modal-4" class="modal cursor-pointer">
               <label class="modal-box relative" for="">
+                <label
+                  htmlFor="my-modal-4"
+                  className="btn btn-sm btn-circle absolute right-2 top-2"
+                >
+                  ✕
+                </label>
                 <h3 class="text-2xl text-center font-bold mb-5">
                   Change Login Password
                 </h3>
@@ -277,12 +300,18 @@ const PersonalInfo = () => {
               <input type="checkbox" id="my-modal" class="modal-toggle" />
               <div class="modal">
                 <div class="modal-box">
+                  <label
+                    htmlFor="my-modal"
+                    className="btn btn-sm btn-circle absolute right-2 top-2"
+                  >
+                    ✕
+                  </label>
                   <h1 className="text-2xl">
                     You will be charged 0.10$ for the SMS
                   </h1>
                   <p className="mt-10">Do you want to proceed?</p>
                   <div className="flex gap-5 mt-5">
-                    <label htmlFor="my-modal-3" className="btn btn-error">
+                    <label htmlFor="my-modal" className="btn btn-error">
                       NO
                     </label>
                     <label
@@ -299,6 +328,12 @@ const PersonalInfo = () => {
             <input type="checkbox" id="my-modal-6" class="modal-toggle" />
             <div class="modal modal-bottom sm:modal-middle">
               <div class="modal-box">
+                <label
+                  htmlFor="my-modal-6"
+                  className="btn btn-sm btn-circle absolute right-2 top-2"
+                >
+                  ✕
+                </label>
                 <h3 class="text-2xl text-center font-bold mb-5">
                   Withdrawal Verification Code
                 </h3>
@@ -343,6 +378,12 @@ const PersonalInfo = () => {
               <input type="checkbox" id="my-modal-7" class="modal-toggle" />
               <div class="modal">
                 <div class="modal-box max-w-[600px]">
+                  <label
+                    htmlFor="my-modal-7"
+                    className="btn btn-sm btn-circle absolute right-2 top-2"
+                  >
+                    ✕
+                  </label>
                   <h3 class="text-2xl text-center font-bold mb-5">
                     Change USDT Address
                   </h3>

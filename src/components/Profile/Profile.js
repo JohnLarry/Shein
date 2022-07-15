@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import avater from "../../images/avater.png";
 import { MdEmail } from "react-icons/md";
 import { AiOutlineClear } from "react-icons/ai";
@@ -20,9 +20,59 @@ import event from "../../images/a625b93.svg";
 import downloadApp from "../../images/8e1d461.svg";
 import inviteFriends from "../../images/04c663c.svg";
 import Navber from "../Navber/Navber";
-import { Link } from "react-router-dom";
-
+import { Link, Navigate, useNavigate } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
+import { updateDashboardMessage } from "../../store/slice";
+import { authkey } from "../Login/authkey";
 const Profile = () => {
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  var dashboardProfile = new FormData();
+  dashboardProfile.append("dashboard", "");
+  dashboardProfile.append("auth", authkey);
+  dashboardProfile.append("logged", localStorage.getItem("auth"));
+
+  var logoutUserData = new FormData();
+  logoutUserData.append("logout", "");
+  logoutUserData.append("auth", authkey);
+  logoutUserData.append("logged", localStorage.getItem("auth"));
+
+  useEffect(() => {
+    fetch("https://mining-nfts.com/api/", {
+      method: "POST",
+      body: dashboardProfile,
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.status == 200) {
+          dispatch(updateDashboardMessage(data.message));
+        } else {
+          navigate("/login");
+        }
+      });
+  }, []);
+
+  var dashboardMessagex = useSelector(
+    (state) => state.dashboardmessage.message
+  );
+  const format = (x) => {
+    return Number.parseFloat(x).toFixed(2);
+  };
+  const logout = () => {
+    fetch("https://mining-nfts.com/api/", {
+      method: "POST",
+      body: logoutUserData,
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.status == 200) {
+          localStorage.removeItem("auth");
+
+          navigate("/login");
+        }
+      });
+  };
+
   return (
     <>
       <div className="container max-w-[1080px] mx-auto">
@@ -35,8 +85,22 @@ const Profile = () => {
                 </div>
               </div>
               <div>
-                <h2 className="card-title">User name</h2>
-                <p>Invitation Code: 56437884</p>
+                <h2 className="card-title">
+                  {" "}
+                  {
+                    //dashboardMessage.user[0].username
+                    //dashboardMessagex.user[0].username
+                    Object.entries(dashboardMessagex).length === 0
+                      ? "user name"
+                      : dashboardMessagex.user[0].username
+                  }
+                </h2>
+                <p>
+                  Invitation Code:{" "}
+                  {Object.entries(dashboardMessagex).length === 0
+                    ? "user name"
+                    : dashboardMessagex.user[0].invite}
+                </p>
               </div>
             </div>
             <div className="flex gap-3">
@@ -49,7 +113,11 @@ const Profile = () => {
               <h1 className="text-3xl font-bold mb-3 text-base-200">
                 Account Balance
               </h1>
-              <h1 className="text-5xl font-bold text-base-200">0</h1>
+              <h1 className="text-5xl font-bold text-base-200">
+                {Object.entries(dashboardMessagex).length === 0
+                  ? "user name"
+                  : dashboardMessagex.asset}
+              </h1>
             </div>
           </div>
         </div>
@@ -82,7 +150,7 @@ const Profile = () => {
             <img src={account} alt="" />
             <h1>Account details</h1>
           </Link>
-          <Link to="/vip/current-level" className="flex flex-col items-center">
+          <Link to="/summary" className="flex flex-col items-center">
             <img src={vip} alt="" />
             <h1>VIP</h1>
           </Link>
@@ -90,13 +158,7 @@ const Profile = () => {
             <img src={transection} alt="" />
             <h1>Transaction</h1>
           </Link>
-          <Link
-            to="/withdrawal-settings"
-            className="flex flex-col items-center"
-          >
-            <img src={withdrawSettings} alt="" />
-            <h1>Withdrawal settings</h1>
-          </Link>
+
           <Link to="/team-report/agent" className="flex flex-col items-center">
             <img src={teamReport} alt="" />
             <h1>Team report</h1>
@@ -109,10 +171,7 @@ const Profile = () => {
             <img src={event} alt="" />
             <h1>Event</h1>
           </Link>
-          <Link to="/download-app" className="flex flex-col items-center">
-            <img src={downloadApp} alt="" />
-            <h1>Download APP</h1>
-          </Link>
+
           <Link to="/invite-friends" className="flex flex-col items-center">
             <img src={inviteFriends} alt="" />
             <h1>Invite friends</h1>
@@ -133,9 +192,41 @@ const Profile = () => {
             </svg>
             <h1>Lock history</h1>
           </Link>
+          <div
+            className="flex flex-col items-center cursor-pointer"
+            onClick={logout}
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-6 w-6"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
+              />
+            </svg>
+            <h1>Logout</h1>
+          </div>
         </div>
       </div>
-      <Navber></Navber>
+      <div
+        style={{
+          display: "flex",
+          position: "fixed",
+          bottom: 0,
+          left: 0,
+          right: 0,
+          zIndex: 99,
+        }}
+        className="mt-5"
+      >
+        <Navber></Navber>
+      </div>
     </>
   );
 };

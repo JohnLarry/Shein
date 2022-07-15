@@ -37,7 +37,7 @@ const WithdrawalHistory = () => {
   let a5 = whitdrawHistory?.slice(0, 400);
   let a6 = whitdrawHistory?.slice(0, 500);
 
-  let d = a2;
+  let d = a6;
 
   if (dataLimit == 1) {
     d = a1;
@@ -51,12 +51,9 @@ const WithdrawalHistory = () => {
     d = a5;
   } else if (dataLimit == 6) {
     d = a6;
-  } else if (dataLimit == 100) {
+  } else if (dataLimit == 7) {
     d = a6;
   }
-
-  const info = document.getElementById("info");
-  // paid(success  ),pending(warning),process(primary ),Cancelled(danger);
 
   return (
     <div className="container max-w-[1080px] mx-auto p-5">
@@ -64,7 +61,7 @@ const WithdrawalHistory = () => {
         <Link to="/">
           <IoIosArrowBack></IoIosArrowBack>
         </Link>
-        <h1 className="text-xl font-bold text-center">Transaction</h1>
+        <h1 className="text-xl font-bold text-center">Team Report</h1>
       </div>
       <div className="flex justify-between max-w-[600px]  md:mx-auto">
         <div className="flex flex-col items-center">
@@ -83,7 +80,7 @@ const WithdrawalHistory = () => {
           onChange={(e) => setDataLimit(e.target.value)}
           className="select select-secondary select-bordered w-[150px] max-w-xs"
         >
-          <option vlaue={100} selected>
+          <option vlaue={7} selected>
             All
           </option>
           <option value={1}>50</option>
@@ -96,7 +93,7 @@ const WithdrawalHistory = () => {
       </div>
       <div>
         <div class="overflow-x-auto">
-          <table class="table table-compact w-full">
+          <table class="table table-compact w-full text-center font-bold">
             <thead>
               <tr>
                 <th></th>
@@ -117,39 +114,31 @@ const WithdrawalHistory = () => {
                   <td>
                     <div className="text-center ">
                       {p?.status == "paid" ? (
-                        <div className="flex font-bold ">
-                          <span class="ml-2 rounded-lg badge badge-success gap-2">
-                            Paid
-                          </span>
-                        </div>
+                        <span class="ml-2 rounded-lg badge badge-success gap-2">
+                          Paid
+                        </span>
                       ) : (
                         <></>
                       )}
                       {p?.status == "pending" ? (
-                        <div className="flex font-bold ">
-                          <span class="ml-2 rounded-lg badge badge-warning gap-2">
-                            Pending
-                          </span>
-                        </div>
+                        <span class="ml-2 rounded-lg badge badge-warning gap-2">
+                          Pending
+                        </span>
                       ) : (
                         <></>
                       )}
 
                       {p?.status == "process" ? (
-                        <div className="flex font-bold ">
-                          <span class="ml-2 rounded-lg badge badge-primary gap-2">
-                            Being Proceed
-                          </span>
-                        </div>
+                        <span class="ml-2 rounded-lg badge badge-primary gap-2">
+                          Being Proceed
+                        </span>
                       ) : (
                         <></>
                       )}
                       {p?.status == "cancelled" ? (
-                        <div className="flex font-bold ">
-                          <span class="ml-2 rounded-lg badge badge-danger gap-2">
-                            Cancelled
-                          </span>
-                        </div>
+                        <span class="ml-2 rounded-lg badge badge-danger gap-2">
+                          Cancelled
+                        </span>
                       ) : (
                         <></>
                       )}

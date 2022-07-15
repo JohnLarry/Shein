@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
@@ -41,7 +41,13 @@ const Login = () => {
         }
       });
   };
+  const loginedCheck = localStorage.getItem("auth");
 
+  useEffect(() => {
+    if (loginedCheck != null) {
+      navigate("/");
+    }
+  }, []);
   return (
     <div className="container max-w-[1080px] mx-auto p-5">
       <div className="flex flex-col items-center mt-28">

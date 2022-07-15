@@ -21,6 +21,7 @@ import { updateSummary } from "../../store/slice";
 import { updateUser } from "../../store/slice";
 import { primary } from "daisyui/src/colors";
 import { updateDashboardMessage } from "../../store/slice";
+import teamReport from "../../images/eb36604.svg";
 const Home = () => {
   const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -186,13 +187,13 @@ const Home = () => {
         </div>
         <div className="flex items-center gap-3 my-5">
           <img className="w-14" src={smallLogo} alt="" />
-          <h1>Welcome back, User</h1>
+          <h1>Welcome back, {dashboardData.user[0].username}</h1>
         </div>
         <div className="card mx-auto bg-base-200 shadow-xl w-full">
           <div className="card-body">
             <div className="flex justify-between">
-              <h1>Total</h1>
-              <h1>0</h1>
+              <h1>Total Asset</h1>
+              <h1>{format(dashboardMessage.asset)}</h1>
             </div>
 
             <div className="flex justify-between">
@@ -205,19 +206,19 @@ const Home = () => {
                   Add Fund
                 </button>
               </div>
-              <h1>{dashboardMessage.locked_asset}</h1>
+              <h1>{format(dashboardMessage.locked_asset)}</h1>
             </div>
             <div className="flex justify-between">
               <h1>Today's profits</h1>
-              <h1>0</h1>
+              <h1>{format(dashboardMessage.today_profit)}</h1>
             </div>
             <div className="flex justify-between">
               <h1>Promotion bonus</h1>
-              <h1>0</h1>
+              <h1>{format(dashboardMessage.promotion_bonus)}</h1>
             </div>
             <div className="flex justify-between">
               <h1>Accumulated profits</h1>
-              <h1>0</h1>
+              <h1>{format(dashboardMessage.total)}</h1>
             </div>
           </div>
         </div>
@@ -389,9 +390,9 @@ const Home = () => {
             <img src={inviteFriends} alt="" />
             <h1>Invite friends</h1>
           </Link>
-          <Link to="/event" className="flex flex-col items-center">
-            <img src={event} alt="" />
-            <h1>Event</h1>
+          <Link to="/team-report/agent" className="flex flex-col items-center">
+            <img src={teamReport} alt="" />
+            <h1>Team report</h1>
           </Link>
           <Link to="/about" className="flex flex-col items-center">
             <img src={aboutUs} alt="" />
@@ -442,7 +443,7 @@ const Home = () => {
                   <img src={task.image} className="rounded-lg" alt="" />
                   <h1>{task.marketName}</h1>
                   <p>Percent: {task.commission_percent / 10}%</p>
-                  <p>Grab Amount: {task.grab_order}</p>
+                  <p>Order Amount: {task.grab_order}</p>
                 </div>
                 <div className="flex justify-between">
                   {dashboardData.user[0][
@@ -468,24 +469,49 @@ const Home = () => {
                       >
                         {dashboardData.user[0][
                           task.packName.toLowerCase() + "_orders"
-                        ] === null
+                        ] == null
                           ? "Locked"
                           : dashboardData.user[0][
                               task.packName.toLowerCase() + "_orders"
                             ] != task.grab_order
                           ? dashboardData.user[0].ableToWork === "1"
                             ? "grab now"
-                            : "grab tomorrow"
-                          : "Grab  tomorrow"}
+                            : "grab tomorrow "
+                          : "Grab  tomorrow "}
                       </button>
                     ) : (
-                      <button className={`btn  w-1/2 bg-primary`}>
-                        grab tomorrow
+                      <button
+                        className={`btn  w-1/2 bg-primary`}
+                        disabled={
+                          dashboardData.user[0][
+                            task.packName.toLowerCase() + "_orders"
+                          ] == null
+                            ? true
+                            : dashboardData.user[0][
+                                task.packName.toLowerCase() + "_orders"
+                              ] != task.grab_order
+                            ? dashboardData.user[0].ableToWork === "1"
+                              ? false
+                              : false
+                            : false
+                        }
+                      >
+                        {dashboardData.user[0][
+                          task.packName.toLowerCase() + "_orders"
+                        ] == null
+                          ? "Locked"
+                          : dashboardData.user[0][
+                              task.packName.toLowerCase() + "_orders"
+                            ] != task.grab_order
+                          ? dashboardData.user[0].ableToWork === "1"
+                            ? "Grab Tomorrow"
+                            : "grab tomorrow "
+                          : "Grab  tomorrow "}
                       </button>
                     )
                   ) : (
                     <button className={`btn  w-1/2 bg-primary`}>
-                      grab tomorrow
+                      <span>grab tomorrow</span>
                     </button>
                   )}
 
@@ -498,7 +524,19 @@ const Home = () => {
           </div>
         </div>
       </div>
-      <Navber></Navber>
+      <div
+        style={{
+          display: "flex",
+          position: "fixed",
+          bottom: 0,
+          left: 0,
+          right: 0,
+          zIndex: 99,
+        }}
+        className="mt-5"
+      >
+        <Navber></Navber>
+      </div>
     </>
   );
 };
