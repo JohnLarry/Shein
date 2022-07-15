@@ -187,7 +187,12 @@ const Home = () => {
         </div>
         <div className="flex items-center gap-3 my-5">
           <img className="w-14" src={smallLogo} alt="" />
-          <h1>Welcome back, {dashboardData.user[0].username}</h1>
+          <h1>
+            Welcome back,{" "}
+            {Object.entries(dashboardMessage).length > 0
+              ? dashboardMessage.user[0].username
+              : "user"}
+          </h1>
         </div>
         <div className="card mx-auto bg-base-200 shadow-xl w-full">
           <div className="card-body">
