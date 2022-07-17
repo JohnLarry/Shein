@@ -43,7 +43,7 @@ const Summary = () => {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mt-5">
         {summary.map((card) =>
-          user[0][card.packName.toLowerCase() + "_orders"] === null ? (
+          user[0][card.packName.toLowerCase() + "_orders"] != null ? (
             <div className="card bg-base-200 shadow-xl h-20 ">
               <div className="card-body">
                 <div className="flex justify-between">

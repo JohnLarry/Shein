@@ -66,8 +66,6 @@ const Login = () => {
               className="input input-bordered"
               {...register("username", {
                 required: true,
-                maxLength: 12,
-                minLength: 5,
               })}
             />
             {errors.userName && <p>User name is required</p>}
@@ -80,21 +78,11 @@ const Login = () => {
               type="password"
               placeholder="Please enter the password"
               className="input input-bordered"
-              {...register("password", { required: true, maxLength: 5 })}
+              {...register("password", { required: true })}
             />
             {errors.password && <p>Password is required</p>}
           </div>
-          <div className="form-control">
-            <label className="label">
-              <span className="label-text">Verification Code</span>
-            </label>
-            <input
-              type="text"
-              placeholder="Please enter verification code"
-              className="input input-bordered"
-              {...register("verification")}
-            />
-          </div>
+
           <div className="form-control mt-6">
             <input
               className="btn btn-primary"

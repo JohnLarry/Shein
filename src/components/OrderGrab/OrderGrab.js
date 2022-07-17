@@ -49,12 +49,10 @@ const OrderGrab = () => {
       .then((res) => res.json())
       .then((data) => {
         if (data.status == 200 && data.message.left_order == 0) {
-          console.log("Show order page");
           setGrabProducts(data.message);
           setShowOrderClaimModal(true);
 
           setStatus("200");
-          console.log(data);
         }
         if (data.status == 200 && data.message.left_order > 0) {
           console.log("Show order page");
@@ -66,12 +64,18 @@ const OrderGrab = () => {
           setStatus("200");
           console.log(data);
         }
-        if (data.status == 201) {
+        if (data.status == 201 && data.message.left_order > 0) {
           setShowOrderCompletedTodayModal(true);
           closeModal();
           setStatus("201");
           console.log("Order is completed for today");
           console.log(data);
+        }
+        if (data.status == 201 && data.message.left_order == 0) {
+          setGrabProducts(data.message);
+          setShowOrderClaimModal(true);
+
+          setStatus("200");
         }
         if (data.status == 100) {
           setShowOrderErrorModal(true);
