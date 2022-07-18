@@ -43,7 +43,7 @@ const Summary = () => {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mt-5">
         {summary.map((card) =>
-          user[0][card.packName.toLowerCase() + "_orders"] != null ? (
+          card.id < user[0].packid ? (
             <div className="card bg-base-200 shadow-xl h-20 ">
               <div className="card-body">
                 <div className="flex justify-between">
@@ -65,8 +65,8 @@ const Summary = () => {
                 </div>
 
                 <div className="flex justify-between">
-                  <h1>Commission rate</h1>
-                  <h1>{card.commission_percent}</h1>
+                  <h1>Commission rate </h1>
+                  <h1>{card.commission_percent / 10}</h1>
                 </div>
                 <div className="flex justify-between">
                   <h1>Open markets</h1>
