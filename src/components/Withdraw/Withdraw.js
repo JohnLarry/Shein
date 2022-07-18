@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { IoIosArrowBack } from "react-icons/io";
 import { useSelector } from "react-redux";
 import { authkey } from "../Login/authkey";
-import md5 from "blueimp-md5";
+
 
 const Withdraw = () => {
   let withDrawData = {};

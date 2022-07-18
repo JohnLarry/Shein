@@ -8,7 +8,7 @@ import Withdraw from "./components/Withdraw/Withdraw";
 import CurrentLevel from "./components/Vip/CurrentLevel";
 import Summary from "./components/Vip/Summary";
 import Profile from "./components/Profile/Profile";
-import Wheel from "./components/Wheel/Wheel";
+
 import Dashboard from "./components/Dashboard/Dashboard/Dashboard";
 import About from "./components/About/About";
 import OrderGrab from "./components/OrderGrab/OrderGrab";
@@ -29,7 +29,11 @@ import GrabHistory from "./components/OrderHistory/GrabHistory/GrabHistory";
 import EarnHistory from "./components/OrderHistory/EarnHistory/EarnHistory";
 import LockHistory from "./components/LockHistory/lockHistory";
 import Transiction from "./components/Transiction/Transiction";
+import Wheel4 from "./components/Wheel4/Wheel4";
 import ProtectedRoute from "./protectedRoute";
+
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 function App() {
   return (
     <div className="app">
@@ -53,20 +57,17 @@ function App() {
           element={<PersonalInfo></PersonalInfo>}
         ></Route>
         <Route path="/withdraw" element={<Withdraw></Withdraw>}></Route>
-        <Route
-          path="/current-level"
-          element={<CurrentLevel></CurrentLevel>}
-        ></Route>
+       
         <Route
           path="/vip/current-level"
           element={<CurrentLevel></CurrentLevel>}
         ></Route>
         <Route path="/summary" element={<Summary></Summary>}></Route>
         <Route path="/profile" element={<Profile></Profile>}></Route>
-        <Route path="/wheel" element={<Wheel></Wheel>}></Route>
+
         <Route path="/dashboard" element={<Dashboard></Dashboard>}></Route>
         <Route path="/about" element={<About></About>}></Route>
-        <Route path="/order-grab/:id" element={<OrderGrab></OrderGrab>}></Route>
+        <Route path="/order-grab" element={<OrderGrab></OrderGrab>}></Route>
         <Route
           path="/order-history"
           element={<OrderHistory></OrderHistory>}
@@ -124,8 +125,13 @@ function App() {
           path="/earn-history"
           element={<EarnHistory></EarnHistory>}
         ></Route>
+        <Route
+          path="/lucky-spin"
+          element={<Wheel4></Wheel4>}
+        ></Route>
         <Route path="/*" element={<NotFound></NotFound>}></Route>
       </Routes>
+      <ToastContainer />
     </div>
   );
 }

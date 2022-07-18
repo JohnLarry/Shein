@@ -90,6 +90,7 @@ const GrabHistory = () => {
                                     <th>Image</th>
                                     <th>Status</th>
                                 </tr>
+                                
                             </thead>
                             {d?.map((p) => (
                                 <tbody key={p?.id}>

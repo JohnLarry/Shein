@@ -5,7 +5,7 @@ import withdraw from "../../images/5dfa582.svg";
 
 const Navber = () => {
   return (
-    <div className=" flex justify-between btm-nav max-w-[1080px] mx-auto grid grid-cols-5 mt-5 rounded-lg ">
+    <div className="  justify-between btm-nav max-w-[1080px] mx-auto grid grid-cols-5 mt-16 rounded-lg ">
       <Link
         to="/"
         className="bg-neutral text-neutral-content hover:bg-pink-200 hover:text-pink-600 flex flex-col items-center p-5 justify-center"

@@ -22,6 +22,8 @@ import { updateUser } from "../../store/slice";
 import { primary } from "daisyui/src/colors";
 import { updateDashboardMessage } from "../../store/slice";
 import teamReport from "../../images/eb36604.svg";
+import wheelSpin from "../../images/wheelSpinBgrmv.png";
+// import wheelSpin from "../../images/wheelSpin.jpg";
 const Home = () => {
   const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -39,8 +41,7 @@ const Home = () => {
 
   const [dashboardData, setDashBoardData] = useState({});
   const [dashboardDataPack, setDashBoardDataPack] = useState([]);
-  const [totalProfit, setTotalProfit] = useState(0);
-  const [returnedData, setReturnedData] = useState(0);
+
   const [lockFundModal, setLockFundModal] = useState(false);
   const [lockFundSuccess, setLockFundSuccess] = useState(false);
   const [lockFundError, setLockFundError] = useState(false);
@@ -72,22 +73,10 @@ const Home = () => {
       });
   }, []);
 
-  setTimeout(() => {
-    var bodydata = new FormData();
-    bodydata.append("data", JSON.stringify(arrayData));
 
-    fetch("https://mining-nfts.com/api/getTopNumber.php", {
-      method: "POST",
-      body: bodydata, // ["1", "2", "3"]
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        setReturnedData(data);
-        localStorage.setItem("claimProfit", returnedData);
-      });
-  }, 1000);
-  const gotoGrabTask = (grab_id) => {
-    navigate("/order-grab?data=" + { grab_id });
+
+  const gotoGrabTask = () => {
+    navigate("/order-grab" );
   };
   const addLockFund = () => {
     fetch("https://mining-nfts.com/api/", {
@@ -137,7 +126,7 @@ const Home = () => {
         <div className="card mx-auto bg-base-200 shadow-xl w-full">
           <div className="carousel w-full">
             <div id="slide1" className="carousel-item relative w-full">
-              <img src="https://placeimg.com/800/200/arch" className="w-full" />
+              <img alt="" src="https://placeimg.com/800/200/arch" className="w-full" />
               <div className="absolute flex justify-between transform -translate-y-1/2 left-5 right-5 top-1/2">
                 <a href="#slide4" className="btn btn-circle">
                   ❮
@@ -148,7 +137,7 @@ const Home = () => {
               </div>
             </div>
             <div id="slide2" className="carousel-item relative w-full">
-              <img src="https://placeimg.com/800/200/arch" className="w-full" />
+              <img alt="" src="https://placeimg.com/800/200/arch" className="w-full" />
               <div className="absolute flex justify-between transform -translate-y-1/2 left-5 right-5 top-1/2">
                 <a href="#slide1" className="btn btn-circle">
                   ❮
@@ -159,7 +148,7 @@ const Home = () => {
               </div>
             </div>
             <div id="slide3" className="carousel-item relative w-full">
-              <img src="https://placeimg.com/800/200/arch" className="w-full" />
+              <img alt="" src="https://placeimg.com/800/200/arch" className="w-full" />
               <div className="absolute flex justify-between transform -translate-y-1/2 left-5 right-5 top-1/2">
                 <a href="#slide2" className="btn btn-circle">
                   ❮
@@ -170,7 +159,7 @@ const Home = () => {
               </div>
             </div>
             <div id="slide4" className="carousel-item relative w-full">
-              <img src="https://placeimg.com/800/200/arch" className="w-full" />
+              <img alt="" src="https://placeimg.com/800/200/arch" className="w-full" />
               <div className="absolute flex justify-between transform -translate-y-1/2 left-5 right-5 top-1/2">
                 <a href="#slide3" className="btn btn-circle">
                   ❮
@@ -411,17 +400,25 @@ const Home = () => {
             <img src={promotion} alt="" />
             <h1>Promotion description</h1>
           </Link>
-          <Link to="/current-level" className="flex flex-col items-center">
+          <Link to="/summary" className="flex flex-col items-center">
             <img src={vip} alt="" />
             <h1>VIP</h1>
+          </Link>
+          <Link to="/lucky-spin" className="flex flex-col items-center">
+            <img className="w-11 rounded " src={wheelSpin} alt="" />
+            <h1>Lucky Spin</h1>
           </Link>
         </div>
         <div>
           <div className="my-8">
             <h1 className="text-center text-xl">Task Lobby</h1>
             <h4 className="text-center text-xm text-green-500">
-              Today est. profit {""}
-              {returnedData} USD
+
+              {/* navigate ordergrab */}
+              {/*  */}
+              <button onClick={gotoGrabTask} type="button" class="px-8 py-3 font-bold bg-black text-white rounded focus:outline-none disabled:opacity-75"
+                            >Start Grabbing</button>
+
             </h4>
           </div>
           <div className="grid grid-cols-2 gap-5">
@@ -430,101 +427,55 @@ const Home = () => {
                 key={task.id}
                 className="card mx-auto bg-base-200 shadow-xl w-full p-5 relative"
               >
-                <input
-                  type="hidden"
-                  value={
-                    dashboardData.user[0][
-                      task.packName.toLowerCase() + "_orders"
-                    ] === null
-                      ? ""
-                      : arrayData.push(
-                          (dashboardData.user[0]["main_balance"] / 100) *
-                            task.commission_percent
-                        )
-                  }
-                />
+
 
                 <div>
                   <img src={task.image} className="rounded-lg" alt="" />
                   <h1>{task.marketName}</h1>
                   <p>Percent: {task.commission_percent / 10}%</p>
                   <p>Order Amount: {task.grab_order}</p>
-                </div>
-                <div className="flex justify-between">
-                  {dashboardData.user[0][
-                    task.packName.toLowerCase() + "_orders"
-                  ] != task.grab_order ? (
-                    dashboardData.user[0].ableToWork === "1" ? (
-                      <button
-                        disabled={
-                          dashboardData.user[0][
-                            task.packName.toLowerCase() + "_orders"
-                          ] === null
-                            ? true
-                            : false
-                        }
-                        className={`btn  w-1/2 ${
-                          dashboardData.user[0].ableToWork === "1"
-                            ? "bg-success"
-                            : "bg-primary"
-                        }`}
-                        onClick={() => {
-                          navigate(`/order-grab/${task.id}`);
-                        }}
-                      >
-                        {dashboardData.user[0][
-                          task.packName.toLowerCase() + "_orders"
-                        ] == null
-                          ? "Locked"
-                          : dashboardData.user[0][
-                              task.packName.toLowerCase() + "_orders"
-                            ] != task.grab_order
-                          ? dashboardData.user[0].ableToWork === "1"
-                            ? "grab now"
-                            : "grab tomorrow "
-                          : "Grab  tomorrow "}
-                      </button>
-                    ) : (
-                      <button
-                        className={`btn  w-1/2 bg-primary`}
-                        disabled={
-                          dashboardData.user[0][
-                            task.packName.toLowerCase() + "_orders"
-                          ] == null
-                            ? true
-                            : dashboardData.user[0][
-                                task.packName.toLowerCase() + "_orders"
-                              ] != task.grab_order
-                            ? dashboardData.user[0].ableToWork === "1"
-                              ? false
-                              : false
-                            : false
-                        }
-                      >
-                        {dashboardData.user[0][
-                          task.packName.toLowerCase() + "_orders"
-                        ] == null
-                          ? "Locked"
-                          : dashboardData.user[0][
-                              task.packName.toLowerCase() + "_orders"
-                            ] != task.grab_order
-                          ? dashboardData.user[0].ableToWork === "1"
-                            ? "Grab Tomorrow"
-                            : "grab tomorrow "
-                          : "Grab  tomorrow "}
-                      </button>
-                    )
-                  ) : (
-                    <button className={`btn  w-1/2 bg-primary`}>
-                      <span>grab tomorrow</span>
-                    </button>
-                  )}
 
-                  <span className=" bg-primary px-3 rounded-lg pt-3 text-white ">
-                    {task.packName}
-                  </span>
+
+
+
+                  <div className="flex justify-between">
+                    <div>
+                      {
+                        task.id < dashboardData.user[0].packid ?
+
+                          <button type="button" class="px-8 py-3 font-bold bg-emerald-600 text-black rounded focus:outline-none disabled:opacity-75"
+                            disabled>Completed</button>
+
+                          // <button disabled className={`btn btn-blue-600 disabled:opacity-75 `}>
+                          //   <span></span>
+                          // </button> 
+                          : <></>
+                      }
+                      {
+                        task.id > dashboardData.user[0].packid ? <button className={`btn  bg-primary`}>
+                          <span>Upgrade</span>
+                        </button> : <></>
+                      }
+                      {
+                        task.id == dashboardData.user[0].packid ? <button className={`btn   bg-success`}>
+                          <span>Current Level</span>
+                        </button> : <></>
+                      }
+                    </div>
+
+                    <span className=" bg-primary px-3 rounded-lg py-3 text-white ">
+                      {task.packName}
+                    </span>
+                  </div>
                 </div>
+
+
+
               </div>
+
+
+
+
             ))}
           </div>
         </div>
